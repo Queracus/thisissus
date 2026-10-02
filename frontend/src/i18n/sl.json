@@ -130,7 +130,8 @@
     "ideas": "Ideje",
     "recipes": "Recepti",
     "shopping": "Nakup",
-    "shared": "Deljeno z mano"
+    "shared": "Deljeno z mano",
+    "more": "Več"
   },
   "space": {
     "none": "Še nisi v nobenem prostoru. Prosi nekoga za povabilo.",
@@ -464,5 +465,20 @@
   "copy": {
     "into": "Kopiraj v moj prostor:",
     "button": "Kopiraj"
+  },
+  "dashboard": {
+    "awaiting": "Čaka tvoj odgovor",
+    "upcoming": "Prihaja",
+    "onThisDay": "Na današnji dan",
+    "stats": "Najina zgodba",
+    "thisYear": "letos",
+    "total": "skupaj",
+    "spent": "letos zapravljeno",
+    "yearsAgo": {
+      "one": "pred {count} letom",
+      "two": "pred {count} letoma",
+      "few": "pred {count} leti",
+      "other": "pred {count} leti"
+    }
   }
 }

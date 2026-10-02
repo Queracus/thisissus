@@ -16,6 +16,7 @@ import Dates from './pages/Dates.jsx'
 import IdeaDetail from './pages/IdeaDetail.jsx'
 import Ideas from './pages/Ideas.jsx'
 import MapPage from './pages/Map.jsx'
+import More from './pages/More.jsx'
 import NewIdea from './pages/NewIdea.jsx'
 import RecipeDetail from './pages/RecipeDetail.jsx'
 import RecipeForm from './pages/RecipeForm.jsx'
@@ -45,6 +46,7 @@ createRoot(document.getElementById('root')).render(
           <Route path="/space" element={<RequireAuth><Space /></RequireAuth>} />
           <Route path="/dates" element={<RequireAuth><Dates /></RequireAuth>} />
           <Route path="/map" element={<RequireAuth><MapPage /></RequireAuth>} />
+          <Route path="/more" element={<RequireAuth><More /></RequireAuth>} />
           <Route path="/ideas" element={<RequireAuth><Ideas /></RequireAuth>} />
           <Route path="/calendar" element={<RequireAuth><Calendar /></RequireAuth>} />
           <Route path="/recipes" element={<RequireAuth><Recipes /></RequireAuth>} />

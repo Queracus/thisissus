@@ -128,7 +128,8 @@
     "ideas": "Ideas",
     "recipes": "Recipes",
     "shopping": "Shopping",
-    "shared": "Shared with me"
+    "shared": "Shared with me",
+    "more": "More"
   },
   "space": {
     "none": "You're not in any space yet. Ask someone for an invite.",
@@ -452,5 +453,18 @@
   "copy": {
     "into": "Copy into my space:",
     "button": "Copy"
+  },
+  "dashboard": {
+    "awaiting": "Waiting for your answer",
+    "upcoming": "Coming up",
+    "onThisDay": "On this day",
+    "stats": "Our story",
+    "thisYear": "this year",
+    "total": "total",
+    "spent": "spent this year",
+    "yearsAgo": {
+      "one": "{count} year ago",
+      "other": "{count} years ago"
+    }
   }
 }

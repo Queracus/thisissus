@@ -9,7 +9,7 @@ from app import config
 from app.db import init_conn
 from app.errors import ApiError, api_error_handler, validation_error_handler
 from app.migrator import migrate
-from app.routers import admin, auth, dates, health, ideas, links, me, media, notifications, photos, proposals, push, recipes, shares, shopping, spaces, tags, trash
+from app.routers import admin, auth, dashboard, dates, health, ideas, links, me, media, notifications, photos, proposals, push, recipes, shares, shopping, spaces, tags, trash
 
 
 @asynccontextmanager
@@ -45,6 +45,6 @@ async def noindex_links(request: Request, call_next):
 
 
 # Every router must be listed here, otherwise it is never mounted.
-for r in (health, auth, me, admin, spaces, dates, tags, photos, media, trash, ideas, proposals, notifications, push, recipes, shopping, shares, links):
+for r in (health, auth, me, admin, spaces, dates, tags, photos, media, trash, ideas, proposals, notifications, push, recipes, shopping, shares, links, dashboard):
     app.include_router(r.router, prefix="/api")
 app.include_router(recipes.photo_router, prefix="/api")

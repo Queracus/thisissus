@@ -15,6 +15,7 @@ RP_ID = os.environ.get("RP_ID", "localhost")
 RP_NAME = "Thisissus"
 ORIGIN = os.environ.get("ORIGIN", "http://localhost:5173")
 COOKIE_SECURE = os.environ.get("COOKIE_SECURE", "0") == "1"
+TIMEZONE = os.environ.get("TIMEZONE", "Europe/Ljubljana")  # "today", "on this day", stats
 
 # Web push (generate with: python -m app.cli vapid-keys)
 VAPID_PUBLIC_KEY = os.environ.get("VAPID_PUBLIC_KEY", "")

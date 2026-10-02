@@ -41,7 +41,7 @@ export default function Recipes() {
         ))}
       </div>
       <Link to="/recipes/new" aria-label={t('recipes.new')}
-        className="fixed bottom-6 right-6 flex h-14 w-14 items-center justify-center rounded-full bg-rose-500 text-3xl text-white shadow-lg active:scale-95">
+        className="fixed bottom-24 right-6 flex h-14 w-14 items-center justify-center rounded-full bg-rose-500 text-3xl text-white shadow-lg active:scale-95">
         +
       </Link>
     </main>
