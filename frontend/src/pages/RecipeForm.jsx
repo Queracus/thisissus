@@ -24,9 +24,10 @@ export const formToRecipe = (v) => ({
   steps: v.steps.filter((s) => s.trim()),
 })
 
-export function RecipeEditor({ initial, onSaved }) {
+// initial = existing recipe (edit); draft = imported values for a new recipe.
+export function RecipeEditor({ initial, draft, onSaved }) {
   const { t, tError } = useT()
-  const [v, setV] = useState(recipeToForm(initial))
+  const [v, setV] = useState(recipeToForm(initial ?? draft))
   const [error, setError] = useState(null)
   const set = (k) => (e) => { const val = e.target.value; setV((cur) => ({ ...cur, [k]: val })) }
   const setIng = (i, k) => (e) => { const val = e.target.value; setV((cur) => ({ ...cur, ingredients: cur.ingredients.map((x, j) => (j === i ? { ...x, [k]: val } : x)) })) }
@@ -38,6 +39,7 @@ export function RecipeEditor({ initial, onSaved }) {
     setError(null)
     try {
       const saved = await api(initial ? `/recipes/${initial.id}` : '/recipes', { method: initial ? 'PUT' : 'POST', body: JSON.stringify(formToRecipe(v)) })
+      if (draft?.image_url) await api(`/recipes/${saved.id}/photos/from-url`, { method: 'POST', body: JSON.stringify({ url: draft.image_url }) }).catch(() => {})
       onSaved(saved)
     } catch (err) {
       setError(tError(err))
@@ -92,12 +94,45 @@ export function RecipeEditor({ initial, onSaved }) {
   )
 }
 
+function ImportBox({ onDraft }) {
+  const { t, tError } = useT()
+  const [url, setUrl] = useState('')
+  const [busy, setBusy] = useState(false)
+  const [error, setError] = useState(null)
+
+  async function onImport(e) {
+    e.preventDefault()
+    setBusy(true)
+    setError(null)
+    try {
+      const d = await api('/recipes/import', { method: 'POST', body: JSON.stringify({ url }) })
+      onDraft({ ...d, tags: [], ingredients: d.ingredients, steps: d.steps })
+    } catch (err) {
+      setError(tError(err))
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  return (
+    <form onSubmit={onImport} className="mb-4 flex flex-col gap-2 rounded-2xl bg-white p-3 text-sm shadow-sm">
+      <span className="font-bold">🔗 {t('recipes.importTitle')}</span>
+      <div className="flex gap-2">
+        <input type="url" required placeholder="https://" value={url} onChange={(e) => setUrl(e.target.value)} className={`${field} flex-1`} />
+        <button type="submit" disabled={busy} className="rounded-full bg-rose-500 px-4 font-bold text-white disabled:opacity-50">{busy ? '…' : t('recipes.import')}</button>
+      </div>
+      {error && <p className="text-red-600">{error}</p>}
+    </form>
+  )
+}
+
 export default function RecipeForm() {
   const { id } = useParams()
   const { t } = useT()
   const qc = useQueryClient()
   const navigate = useNavigate()
   const { data } = useRecipe(id)
+  const [draft, setDraft] = useState(null)
   const onSaved = (saved) => {
     qc.invalidateQueries({ queryKey: ['recipes'] })
     qc.setQueryData(['recipe', String(saved.id)], saved)
@@ -108,7 +143,12 @@ export default function RecipeForm() {
     <main className="min-h-[85vh] bg-rose-50 p-4 font-sans text-rose-900">
       <div className="mx-auto max-w-md">
         <h1 className="mb-3 font-display text-3xl italic text-rose-600">{t(id ? 'recipes.edit' : 'recipes.new')}</h1>
-        {id ? data && <RecipeEditor initial={data} onSaved={onSaved} /> : <RecipeEditor onSaved={onSaved} />}
+        {id ? data && <RecipeEditor initial={data} onSaved={onSaved} /> : (
+          <>
+            <ImportBox onDraft={setDraft} />
+            <RecipeEditor key={draft?.source_url ?? 'blank'} draft={draft} onSaved={onSaved} />
+          </>
+        )}
       </div>
     </main>
   )

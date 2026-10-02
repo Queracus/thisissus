@@ -109,7 +109,9 @@
       "not_participant": "Nisi povabljen/a."
     },
     "recipe": {
-      "not_found": "Recept ne obstaja."
+      "not_found": "Recept ne obstaja.",
+      "import_failed": "Na tej strani ni recepta, ki bi ga znala prebrati.",
+      "url_not_allowed": "Te povezave ne smem odpreti."
     }
   },
   "nav": {
@@ -408,6 +410,8 @@
       "few": "skuhano {count}-krat",
       "other": "skuhano {count}-krat"
     },
-    "lastCooked": "nazadnje {when}"
+    "lastCooked": "nazadnje {when}",
+    "importTitle": "Uvozi recept s spletne strani",
+    "import": "Uvozi"
   }
 }

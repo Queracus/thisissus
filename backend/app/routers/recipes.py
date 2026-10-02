@@ -2,12 +2,16 @@ from datetime import datetime
 from typing import Literal
 
 import asyncpg
+import httpx
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel, Field, HttpUrl
 
+from app import recipe_import
 from app.auth.deps import current_user
 from app.db import get_conn
 from app.errors import ApiError
+from app.jobs import enqueue
+from app.media import store
 from app.notify import notify_space
 from app.policy import active_space, scope_sql
 from app.routers.dates import TagOut
@@ -150,6 +154,53 @@ async def delete_recipe(recipe_id: int, user=Depends(current_user), conn: asyncp
     await visible_recipe(conn, user["id"], recipe_id)
     await conn.execute("UPDATE recipes SET deleted_at = now() WHERE id = $1", recipe_id)
     return {"ok": True}
+
+
+class ImportIn(BaseModel):
+    url: HttpUrl
+
+
+@router.post("/import")
+async def import_recipe(body: ImportIn, _=Depends(current_user)):
+    """Fetch a recipe page and return an unsaved draft for the editor (nothing is stored)."""
+    try:
+        draft = recipe_import.parse_recipe_html(await recipe_import.fetch_html(str(body.url)), str(body.url))
+    except recipe_import.ImportBlocked:
+        raise ApiError(400, "recipe.url_not_allowed")
+    except httpx.HTTPError:
+        raise ApiError(422, "recipe.import_failed")
+    if not draft:
+        raise ApiError(422, "recipe.import_failed")
+    return draft
+
+
+class _Bytes:
+    """Minimal UploadFile stand-in so downloaded images go through the same checks as uploads."""
+    def __init__(self, data: bytes):
+        self.data, self.pos = data, 0
+
+    async def read(self, n: int) -> bytes:
+        chunk = self.data[self.pos:self.pos + n]
+        self.pos += n
+        return chunk
+
+
+@router.post("/{recipe_id}/photos/from-url")
+async def photo_from_url(recipe_id: int, body: ImportIn, user=Depends(current_user), conn: asyncpg.Connection = Depends(get_conn)):
+    """Download an imported recipe's image into its gallery (same type/size checks and processing as an upload)."""
+    recipe = await visible_recipe(conn, user["id"], recipe_id)
+    try:
+        data = await recipe_import.fetch_bytes(str(body.url), store.PHOTO_MAX_BYTES)
+    except recipe_import.ImportBlocked:
+        raise ApiError(400, "recipe.url_not_allowed")
+    except httpx.HTTPError:
+        raise ApiError(422, "recipe.import_failed")
+    async with conn.transaction():
+        media_id, kind = await store.save_upload(conn, recipe["space_id"], user["id"], _Bytes(data), {"image/jpeg": "photo", "image/png": "photo", "image/webp": "photo"})
+        await conn.execute("INSERT INTO recipe_media (recipe_id, media_id, position) SELECT $1, $2, coalesce(max(position) + 1, 0) FROM recipe_media WHERE recipe_id = $1",
+                           recipe_id, media_id)
+        await enqueue(conn, "media.derive", {"media_id": media_id})
+    return {"id": media_id, "kind": kind, "status": "pending"}
 
 
 @router.put("/{recipe_id}/review")
