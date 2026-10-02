@@ -25,6 +25,12 @@ async def notify(conn: asyncpg.Connection, actor_id: int | None, kind: str, payl
     return ids
 
 
+async def notify_space(conn: asyncpg.Connection, actor_id: int, space_id: int, kind: str, payload: dict) -> None:
+    """Tell everyone else in the space."""
+    members = [r["user_id"] for r in await conn.fetch("SELECT user_id FROM space_members WHERE space_id = $1", space_id)]
+    await notify(conn, actor_id, kind, payload, members)
+
+
 async def notify_idea(conn: asyncpg.Connection, actor_id: int, idea_id: int, event: str, extra: dict | None = None) -> None:
     """Tell the idea's other participants about a timeline event."""
     from app.routers.ideas import participants  # local import: routers import this module

@@ -353,6 +353,11 @@
       },
       "rating": {
         "missing": "Kako je bilo na {title}? Oceni zmenek ❤️"
+      },
+      "recipe": {
+        "created": "{actor} je dodal/a recept: {title}",
+        "cooked": "{actor} je skuhal/a {title}! Oceni 🍲",
+        "rating_missing": "Kako je bil {title}? Oceni recept 🍲"
       }
     }
   },
@@ -393,6 +398,16 @@
       "amount": "kol.",
       "unit": "enota",
       "item": "sestavina"
-    }
+    },
+    "cooked": "Skuhala sva!",
+    "logAsDate": "Zabeleži kot zmenek",
+    "commentPlaceholder": "Kako je bilo? Kaj drugače naslednjič?",
+    "cookedCount": {
+      "one": "skuhano {count}-krat",
+      "two": "skuhano {count}-krat",
+      "few": "skuhano {count}-krat",
+      "other": "skuhano {count}-krat"
+    },
+    "lastCooked": "nazadnje {when}"
   }
 }

@@ -1,5 +1,6 @@
 import { Link, useSearchParams } from 'react-router-dom'
 import { mediaUrl } from '../components/Photos.jsx'
+import { Hearts } from '../components/Reviews.jsx'
 import { TagChips } from '../components/Tags.jsx'
 import { useT } from '../i18n/index.jsx'
 import { useRecipes } from '../recipes.js'
@@ -30,6 +31,7 @@ export default function Recipes() {
             </div>
             <div className="flex min-w-0 flex-col gap-1">
               <span className="truncate font-bold">{r.title}</span>
+              {r.avg_rating != null && <span className="text-xs"><Hearts value={r.avg_rating} /></span>}
               <span className="text-xs text-rose-400">
                 {r.prep_minutes != null && `⏱ ${r.prep_minutes} min · `}{t('recipes.portions', { count: r.portions })}
               </span>

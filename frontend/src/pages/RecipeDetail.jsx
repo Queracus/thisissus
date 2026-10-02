@@ -2,6 +2,8 @@ import { useQueryClient } from '@tanstack/react-query'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { api } from '../api.js'
 import Photos from '../components/Photos.jsx'
+import RecipeCooked from '../components/RecipeCooked.jsx'
+import { Hearts } from '../components/Reviews.jsx'
 import { TagChips } from '../components/Tags.jsx'
 import { useT } from '../i18n/index.jsx'
 import { formatAmount, useRecipe } from '../recipes.js'
@@ -31,6 +33,7 @@ export default function RecipeDetail() {
             {t(`recipes.status.${r.status}`)} · {t('recipes.portions', { count: r.portions })}{r.prep_minutes != null && ` · ⏱ ${r.prep_minutes} min`}
           </p>
           <TagChips tags={r.tags} />
+          {r.avg_rating != null && <p><Hearts value={r.avg_rating} /> <span className="text-sm text-rose-400">{r.avg_rating.toFixed(1)}</span></p>}
           <Photos base={`/recipes/${r.id}`} queryKey={['recipe', String(r.id)]} photos={r.photos} />
           {r.ingredients.length > 0 && (
             <section className="rounded-2xl bg-white p-4 shadow-sm">
@@ -48,6 +51,7 @@ export default function RecipeDetail() {
               <ol className="flex list-decimal flex-col gap-2 pl-5 text-sm">{r.steps.map((s, n) => <li key={n} className="whitespace-pre-line">{s}</li>)}</ol>
             </section>
           )}
+          <RecipeCooked recipe={r} />
           {r.source_url && <a href={r.source_url} target="_blank" rel="noreferrer noopener" className="break-all text-sm text-rose-600 underline">🔗 {r.source_url}</a>}
           <div className="mt-2 flex gap-4">
             <Link to={`/recipes/${r.id}/edit`} className="text-sm text-rose-500 underline">{t('dates.edit')}</Link>

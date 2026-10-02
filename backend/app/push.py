@@ -20,13 +20,17 @@ TEXTS = {
            "proposal.refused": "{actor}: termin za {title} ne ustreza", "proposal.cancelled": "{actor} je preklical/a predlog za {title}",
            "idea.done": "{actor}: šla sta na {title}! Oceni ga 🎉", "idea.not_for_me": "{actor}: {title} ni zanj/zanjo",
            "idea.reopened": "{actor} je ponovno odprl/a {title}", "idea.comment": "{actor} je komentiral/a {title}",
-           "date.tomorrow": "Jutri: {title} 💕", "rating.missing": "Kako je bilo na {title}? Oceni zmenek ❤️"},
+           "date.tomorrow": "Jutri: {title} 💕", "rating.missing": "Kako je bilo na {title}? Oceni zmenek ❤️",
+           "recipe.created": "{actor} je dodal/a recept: {title}", "recipe.cooked": "{actor} je skuhal/a {title}! Oceni 🍲",
+           "recipe.rating_missing": "Kako je bil {title}? Oceni recept 🍲"},
     "en": {"idea.created": "{actor} has a new idea: {title}", "proposal.created": "{actor} proposes a time for {title}",
            "proposal.countered": "{actor} suggests another time for {title}", "proposal.accepted": "{actor} accepted the time for {title} 💕",
            "proposal.refused": "{actor}: the time for {title} doesn't work", "proposal.cancelled": "{actor} cancelled the proposal for {title}",
            "idea.done": "{actor}: you did {title}! Rate it 🎉", "idea.not_for_me": "{actor}: {title} isn't for them",
            "idea.reopened": "{actor} reopened {title}", "idea.comment": "{actor} commented on {title}",
-           "date.tomorrow": "Tomorrow: {title} 💕", "rating.missing": "How was {title}? Rate the date ❤️"},
+           "date.tomorrow": "Tomorrow: {title} 💕", "rating.missing": "How was {title}? Rate the date ❤️",
+           "recipe.created": "{actor} added a recipe: {title}", "recipe.cooked": "{actor} cooked {title}! Rate it 🍲",
+           "recipe.rating_missing": "How was {title}? Rate the recipe 🍲"},
 }
 TEXT_FALLBACK = {"sl": "Nekaj novega v Thisissus", "en": "Something new in Thisissus"}
 
@@ -49,7 +53,8 @@ def generate_vapid_keys() -> tuple[str, str]:
 def message(locale: str, kind: str, payload: dict) -> dict:
     template = TEXTS.get(locale, TEXTS["sl"]).get(kind)
     body = template.format(actor=payload.get("actor_name") or "?", title=payload.get("title") or "") if template else TEXT_FALLBACK.get(locale, TEXT_FALLBACK["sl"])
-    url = f"/ideas/{payload['idea_id']}" if "idea_id" in payload else f"/dates/{payload['date_id']}" if "date_id" in payload else "/"
+    url = (f"/ideas/{payload['idea_id']}" if payload.get("idea_id") else f"/recipes/{payload['recipe_id']}" if payload.get("recipe_id")
+           else f"/dates/{payload['date_id']}" if payload.get("date_id") else "/")
     return {"title": TITLE, "body": body, "url": url}
 
 

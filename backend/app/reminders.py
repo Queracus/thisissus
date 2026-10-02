@@ -35,3 +35,13 @@ async def tick(conn: asyncpg.Connection, payload: dict) -> None:
                GROUP BY d.id""", RATE_AFTER_DAYS, RATE_UNTIL_DAYS):
         targets = await _once(conn, f"rating.missing:{row['id']}", row["missing"])
         await notify(conn, None, "rating.missing", {"date_id": row["id"], "title": row["title"]}, targets)
+
+    # Recipes cooked a few days ago that someone in the space hasn't rated.
+    for row in await conn.fetch(
+            """SELECT r.id, r.title, array_agg(DISTINCT m.user_id) AS missing FROM recipes r
+               JOIN recipe_cooks c ON c.recipe_id = r.id JOIN space_members m ON m.space_id = r.space_id
+               WHERE r.deleted_at IS NULL AND c.created_at BETWEEN now() - make_interval(days => $2) AND now() - make_interval(days => $1)
+                 AND NOT EXISTS (SELECT 1 FROM recipe_reviews x WHERE x.recipe_id = r.id AND x.user_id = m.user_id)
+               GROUP BY r.id""", RATE_AFTER_DAYS, RATE_UNTIL_DAYS):
+        targets = await _once(conn, f"recipe.rating_missing:{row['id']}", row["missing"])
+        await notify(conn, None, "recipe.rating_missing", {"recipe_id": row["id"], "title": row["title"]}, targets)

@@ -12,7 +12,7 @@ from app.policy import active_space, scope_sql
 from app.routers.tags import set_tags, tags_json
 
 router = APIRouter(prefix="/dates")
-COLUMNS = """id, space_id, title, starts_at, ends_at, place_name, lat, lon, cost::float AS cost, created_by, created_at, idea_id,
+COLUMNS = """id, space_id, title, starts_at, ends_at, place_name, lat, lon, cost::float AS cost, created_by, created_at, idea_id, recipe_id,
              (SELECT avg(r.rating)::float FROM date_reviews r WHERE r.date_id = dates.id) AS avg_rating,
              """ + tags_json("date_tags", "date_id", "dates.id") + " AS tags"
 
@@ -79,6 +79,7 @@ class DateOut(BaseModel):
     created_by: int | None
     created_at: datetime
     idea_id: int | None = None
+    recipe_id: int | None = None
     avg_rating: float | None
     tags: list[TagOut]
     reviews: list[ReviewOut] = []

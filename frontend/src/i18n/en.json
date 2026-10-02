@@ -345,6 +345,11 @@
       },
       "rating": {
         "missing": "How was {title}? Rate the date ❤️"
+      },
+      "recipe": {
+        "created": "{actor} added a recipe: {title}",
+        "cooked": "{actor} cooked {title}! Rate it 🍲",
+        "rating_missing": "How was {title}? Rate the recipe 🍲"
       }
     }
   },
@@ -383,6 +388,14 @@
       "amount": "qty",
       "unit": "unit",
       "item": "ingredient"
-    }
+    },
+    "cooked": "We cooked it!",
+    "logAsDate": "Log it as a date",
+    "commentPlaceholder": "How was it? Anything to change next time?",
+    "cookedCount": {
+      "one": "cooked once",
+      "other": "cooked {count} times"
+    },
+    "lastCooked": "last {when}"
   }
 }

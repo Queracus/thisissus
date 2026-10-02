@@ -5,7 +5,8 @@ import { api } from '../api.js'
 import { formatWhen } from '../dates.js'
 import { useT } from '../i18n/index.jsx'
 
-const link = (n) => (n.payload.idea_id ? `/ideas/${n.payload.idea_id}` : n.payload.date_id ? `/dates/${n.payload.date_id}` : '/')
+const link = ({ payload: p }) =>
+  p.idea_id ? `/ideas/${p.idea_id}` : p.recipe_id ? `/recipes/${p.recipe_id}` : p.date_id ? `/dates/${p.date_id}` : '/'
 
 export default function Bell() {
   const { t, locale } = useT()
