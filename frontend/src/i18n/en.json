@@ -83,6 +83,11 @@
     },
     "tag": {
       "invalid": "Invalid tag."
+    },
+    "media": {
+      "too_large": "File is too large (max 25 MB).",
+      "unsupported_type": "This file type isn't supported.",
+      "not_found": "Photo not found."
     }
   },
   "nav": {
@@ -156,5 +161,17 @@
       "home": "at home",
       "trip": "trip"
     }
+  },
+  "photos": {
+    "add": "Add photos",
+    "processing": "processing ...",
+    "failed": "failed",
+    "caption": "Caption",
+    "moveLeft": "left",
+    "moveRight": "right",
+    "original": "Original",
+    "delete": "Remove",
+    "confirmDelete": "Remove this photo?",
+    "close": "Close"
   }
 }

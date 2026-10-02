@@ -49,6 +49,16 @@ class ReviewOut(BaseModel):
     notes: str | None
 
 
+class PhotoOut(BaseModel):
+    id: int
+    kind: str
+    status: str
+    width: int | None
+    height: int | None
+    caption: str | None
+    position: int
+
+
 class TagOut(BaseModel):
     id: int
     name: str
@@ -70,6 +80,7 @@ class DateOut(BaseModel):
     avg_rating: float | None
     tags: list[TagOut]
     reviews: list[ReviewOut] = []
+    photos: list[PhotoOut] = []
 
 
 async def visible_date(conn: asyncpg.Connection, user_id: int, date_id: int) -> asyncpg.Record:
@@ -102,6 +113,8 @@ async def create_date(body: DateIn, space: asyncpg.Record = Depends(active_space
 @router.get("/{date_id}", response_model=DateOut)
 async def get_date(date_id: int, user: asyncpg.Record = Depends(current_user), conn: asyncpg.Connection = Depends(get_conn)):
     date = dict(await visible_date(conn, user["id"], date_id))
+    from app.routers.photos import date_photos
+    date["photos"] = await date_photos(conn, date_id)
     date["reviews"] = [dict(r) for r in await conn.fetch(
         """SELECT r.user_id, u.display_name, r.rating, r.again, r.notes FROM date_reviews r JOIN users u ON u.id = r.user_id
            WHERE r.date_id = $1 ORDER BY r.updated_at""", date_id)]

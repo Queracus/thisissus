@@ -11,9 +11,13 @@ import asyncpg
 from app import config
 from app.db import init_conn
 from app.jobs import Handler, run_once, schedule_periodic
+from app.media.derive import derive_photo
 from app.migrator import migrate
 
-HANDLERS: dict[str, Handler] = {}
+# Every job kind must be listed here, otherwise it fails with 'no handler'.
+HANDLERS: dict[str, Handler] = {
+    "media.derive": derive_photo,
+}
 PERIODIC: dict[str, int] = {}
 IDLE_SECONDS = 2
 

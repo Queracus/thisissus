@@ -2,6 +2,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { api } from '../api.js'
 import { formatCost, formatWhen, useDate } from '../dates.js'
+import Photos from '../components/Photos.jsx'
 import Reviews, { Hearts } from '../components/Reviews.jsx'
 import { TagChips } from '../components/Tags.jsx'
 import { useT } from '../i18n/index.jsx'
@@ -32,6 +33,7 @@ export default function DateDetail() {
           {d.place_name && <p>📍 {d.place_name}</p>}
           {d.cost != null && <p>💶 {formatCost(locale, d.cost)}</p>}
           {d.avg_rating != null && <p><Hearts value={d.avg_rating} /> <span className="text-sm text-rose-400">{d.avg_rating.toFixed(1)}</span></p>}
+          <Photos date={d} />
           <Reviews date={d} />
           <div className="mt-4 flex gap-4">
             <Link to={`/dates/${d.id}/edit`} className="text-sm text-rose-500 underline">{t('dates.edit')}</Link>

@@ -23,4 +23,9 @@ export function useDates() {
   return useQuery({ queryKey: ['dates', active?.id], queryFn: () => api('/dates'), enabled: !!active })
 }
 
-export const useDate = (id) => useQuery({ queryKey: ['date', id], queryFn: () => api(`/dates/${id}`) })
+export const useDate = (id) =>
+  useQuery({
+    queryKey: ['date', id],
+    queryFn: () => api(`/dates/${id}`),
+    refetchInterval: (q) => (q.state.data?.photos?.some((p) => p.status === 'pending') ? 3000 : false),
+  })

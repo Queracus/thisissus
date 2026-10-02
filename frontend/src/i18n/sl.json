@@ -85,6 +85,11 @@
     },
     "tag": {
       "invalid": "Neveljavna oznaka."
+    },
+    "media": {
+      "too_large": "Datoteka je prevelika (max 25 MB).",
+      "unsupported_type": "Ta vrsta datoteke ni podprta.",
+      "not_found": "Fotke ni."
     }
   },
   "nav": {
@@ -160,5 +165,17 @@
       "home": "doma",
       "trip": "izlet"
     }
+  },
+  "photos": {
+    "add": "Dodaj fotke",
+    "processing": "obdelujem ...",
+    "failed": "napaka",
+    "caption": "Opis",
+    "moveLeft": "levo",
+    "moveRight": "desno",
+    "original": "Original",
+    "delete": "Odstrani",
+    "confirmDelete": "Odstranim to fotko?",
+    "close": "Zapri"
   }
 }

@@ -9,6 +9,9 @@ dependencies = [
     "python-dotenv",
     "webauthn",
     "argon2-cffi",
+    "pillow",
+    "pillow-heif",
+    "python-multipart",
 ]
 
 [project.optional-dependencies]
