@@ -291,7 +291,8 @@
       "cancelled": "je preklical/a predlog",
       "comment": "",
       "not_for_me": "pravi, da ni zanj/zanjo",
-      "reopened": "je ponovno odprl/a idejo"
+      "reopened": "je ponovno odprl/a idejo",
+      "done": "je označil/a: šla sva! 🎉"
     },
     "waitingFor": "Še ni odgovoril/a: {names}",
     "notForMe": "Ni zame",
@@ -302,5 +303,15 @@
     "title": "Kdo gre zraven",
     "everyone": "vsi v prostoru",
     "some": "samo izbrani"
+  },
+  "didIt": {
+    "button": "Šla sva!",
+    "keep": "Ohrani idejo za naslednjič",
+    "count": {
+      "one": "opravljeno {count}-krat",
+      "two": "opravljeno {count}-krat",
+      "few": "opravljeno {count}-krat",
+      "other": "opravljeno {count}-krat"
+    }
   }
 }

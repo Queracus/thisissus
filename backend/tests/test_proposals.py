@@ -3,7 +3,7 @@ from datetime import UTC, datetime, timedelta
 
 import pytest
 
-from app.proposals import Accept, Cancel, Counter, IdeaState, NotForMe, Propose, Proposal, Refuse, Reopen, TransitionError, transition
+from app.proposals import Accept, Cancel, Counter, DidIt, IdeaState, NotForMe, Propose, Proposal, Refuse, Reopen, TransitionError, transition
 
 NOW = datetime(2026, 10, 1, 12, 0, tzinfo=UTC)
 FRI, SAT, SUN = (NOW + timedelta(days=d) for d in (3, 4, 5))
@@ -128,3 +128,12 @@ def test_archived_idea_can_be_reopened():
 
     assert transition(archived, Reopen(BOR), NOW).state.status == "idea"
     assert err(idea(), Reopen(BOR)) == "proposal.invalid_state"
+
+
+def test_did_it_from_scheduled_or_plain_idea():
+    scheduled = transition(pending(), Accept(BOR, FRI), NOW).state
+
+    r = transition(scheduled, DidIt(ANA, archive=False), NOW)
+    assert (r.state.status, r.state.proposal, r.state.scheduled_at, r.closed, r.event) == ("idea", None, None, ((7, "done"),), "done")
+    assert transition(idea(), DidIt(BOR, archive=True), NOW).state.status == "archived"
+    assert err(pending(), DidIt(ANA, archive=False)) == "proposal.invalid_state"

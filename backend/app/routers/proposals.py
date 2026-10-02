@@ -8,7 +8,7 @@ from pydantic import AwareDatetime, BaseModel, Field
 from app.auth.deps import current_user
 from app.db import get_conn
 from app.errors import ApiError
-from app.proposals import Accept, Cancel, Counter, IdeaState, NotForMe, Propose, Proposal, Refuse, Reopen, Result, TransitionError, transition
+from app.proposals import Accept, Cancel, Counter, DidIt, IdeaState, NotForMe, Propose, Proposal, Refuse, Reopen, Result, TransitionError, transition
 from app.routers.ideas import participants, visible_idea
 
 router = APIRouter(prefix="/ideas")
@@ -62,7 +62,8 @@ async def add_event(conn: asyncpg.Connection, idea_id: int, actor: int, kind: st
     await conn.execute("INSERT INTO idea_events (idea_id, actor_id, kind, payload) VALUES ($1, $2, $3, $4)", idea_id, actor, kind, payload)
 
 
-async def run(conn: asyncpg.Connection, user: asyncpg.Record, idea_id: int, make_event, payload: dict) -> dict:
+async def run(conn: asyncpg.Connection, user: asyncpg.Record, idea_id: int, make_event, payload: dict, after=None) -> dict:
+    """Load → transition → save under a row lock. `after(state_before)` may add side effects in the same transaction."""
     await visible_idea(conn, user["id"], idea_id)
     async with conn.transaction():
         state = await load_state(conn, idea_id)
@@ -70,8 +71,24 @@ async def run(conn: asyncpg.Connection, user: asyncpg.Record, idea_id: int, make
             result = transition(state, make_event(user["id"]), datetime.now(UTC))
         except TransitionError as e:
             raise ApiError(409, e.code)
+        if after:
+            payload = {**payload, **await after(state)}
         await save(conn, idea_id, user["id"], result, payload)
     return await visible_idea(conn, user["id"], idea_id)
+
+
+class DidItIn(BaseModel):
+    archive: bool = False
+
+
+async def create_date_from_idea(conn: asyncpg.Connection, idea_id: int, user_id: int, when: datetime) -> int:
+    """Pre-filled Date We've Had: title, estimated cost and tags from the idea; time = agreed slot or now."""
+    date_id = await conn.fetchval(
+        """INSERT INTO dates (space_id, title, starts_at, cost, created_by, idea_id)
+           SELECT space_id, title, $3, est_cost, $2, id FROM ideas WHERE id = $1 RETURNING id""", idea_id, user_id, when)
+    await conn.execute("INSERT INTO date_tags (date_id, tag_id) SELECT $1, tag_id FROM idea_tags WHERE idea_id = $2", date_id, idea_id)
+    await conn.execute("UPDATE ideas SET times_done = times_done + 1 WHERE id = $1", idea_id)
+    return date_id
 
 
 def iso_z(dt: datetime) -> str:
@@ -116,6 +133,18 @@ async def not_for_me(idea_id: int, user=Depends(current_user), conn: asyncpg.Con
 @router.post("/{idea_id}/reopen")
 async def reopen(idea_id: int, user=Depends(current_user), conn: asyncpg.Connection = Depends(get_conn)):
     return await run(conn, user, idea_id, Reopen, {})
+
+
+@router.post("/{idea_id}/did-it")
+async def did_it(idea_id: int, body: DidItIn, user=Depends(current_user), conn: asyncpg.Connection = Depends(get_conn)):
+    created = {}
+
+    async def make_date(before: IdeaState) -> dict:
+        created["date_id"] = await create_date_from_idea(conn, idea_id, user["id"], before.scheduled_at or datetime.now(UTC))
+        return created
+
+    idea = await run(conn, user, idea_id, lambda u: DidIt(u, body.archive), {}, after=make_date)
+    return {"idea": idea, "date_id": created["date_id"]}
 
 
 @router.post("/{idea_id}/comments")

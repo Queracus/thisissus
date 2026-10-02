@@ -3,6 +3,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { api } from '../api.js'
 import IdeaFields, { formToBody, ideaToForm } from '../components/IdeaFields.jsx'
+import DidIt from '../components/DidIt.jsx'
 import Negotiation from '../components/Negotiation.jsx'
 import { Button } from '../components/Screen.jsx'
 import { TagChips } from '../components/Tags.jsx'
@@ -66,7 +67,9 @@ export default function IdeaDetail() {
               {idea.url && <a href={idea.url} target="_blank" rel="noreferrer noopener" className="break-all text-rose-600 underline">🔗 {idea.url}</a>}
               {idea.est_cost != null && <p>💶 ~{formatCost(locale, idea.est_cost)}</p>}
               {idea.season && <p>{SEASON_EMOJI[idea.season]} {t(`ideas.season.${idea.season}`)}</p>}
+              {idea.times_done > 0 && <p className="text-sm">🎉 {t('didIt.count', { count: idea.times_done })}</p>}
               <Negotiation idea={idea} />
+              <DidIt idea={idea} />
               <div className="mt-4 flex gap-4">
                 <button onClick={() => setEditing(true)} className="text-sm text-rose-500 underline">{t('dates.edit')}</button>
                 <button onClick={onDelete} className="text-sm text-red-600 underline">{t('dates.delete')}</button>

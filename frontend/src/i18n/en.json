@@ -285,7 +285,8 @@
       "cancelled": "cancelled the proposal",
       "comment": "",
       "not_for_me": "says it's not for them",
-      "reopened": "reopened the idea"
+      "reopened": "reopened the idea",
+      "done": "marked it done 🎉"
     },
     "waitingFor": "Still waiting for: {names}",
     "notForMe": "Not for me",
@@ -296,5 +297,13 @@
     "title": "Who's coming",
     "everyone": "everyone in the space",
     "some": "only the selected"
+  },
+  "didIt": {
+    "button": "We did it!",
+    "keep": "Keep the idea for next time",
+    "count": {
+      "one": "done once",
+      "other": "done {count} times"
+    }
   }
 }

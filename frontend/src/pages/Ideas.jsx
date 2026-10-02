@@ -22,7 +22,7 @@ export default function Ideas() {
           <Link key={i.id} to={`/ideas/${i.id}`} className="rounded-2xl bg-white p-4 shadow-sm active:scale-[0.99]">
             <div className="flex items-center justify-between gap-2">
               <span className="font-bold">{i.season && SEASON_EMOJI[i.season]} {i.title}</span>
-              <span className="text-xs text-rose-400">{t(`ideas.status.${i.status}`)}</span>
+              <span className="text-xs text-rose-400">{i.times_done > 0 && `🎉${i.times_done}× · `}{t(`ideas.status.${i.status}`)}</span>
             </div>
             <div className="mt-1 flex justify-between text-xs text-rose-400">
               <span>{t('ideas.suggestedBy', { name: i.suggested_by_name ?? '?' })}</span>

@@ -4,6 +4,7 @@
                         |  ^ counter (any participant; also from scheduled = reschedule)
                         |--refuse / cancel--> idea
     idea|pending|scheduled --not for me--> archived --reopen--> idea
+    idea|scheduled --did it--> idea (or archived), and a Date We've Had is created
 
 The first accept narrows a multi-slot proposal to that slot; other participants then accept it or counter.
 """
@@ -75,6 +76,12 @@ class Reopen:
 
 
 @dataclass(frozen=True)
+class DidIt:
+    actor: int
+    archive: bool  # keep the idea for next time, or archive it
+
+
+@dataclass(frozen=True)
 class Result:
     state: IdeaState
     event: str                                       # timeline kind: proposed | countered | accepted | scheduled | refused | cancelled
@@ -116,6 +123,11 @@ def transition(state: IdeaState, event, now: datetime) -> Result:
     if isinstance(event, NotForMe):  # pass on the idea itself (archived, not deleted)
         _require(state.status in ("idea", "pending", "scheduled"), "proposal.invalid_state")
         return Result(replace(state, status="archived", proposal=None, scheduled_at=None), "not_for_me", _closing(p, "cancelled"))
+
+    if isinstance(event, DidIt):  # the router creates the date (side effect outside this pure function)
+        _require(state.status in ("idea", "scheduled"), "proposal.invalid_state")
+        return Result(replace(state, status="archived" if event.archive else "idea", proposal=None, scheduled_at=None),
+                      "done", _closing(p, "done"))
 
     if isinstance(event, Reopen):
         _require(state.status == "archived", "proposal.invalid_state")
