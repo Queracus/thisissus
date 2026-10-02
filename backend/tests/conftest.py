@@ -10,21 +10,22 @@ from app.migrator import migrate
 
 @pytest.fixture(scope="session")
 async def test_db():
-    """Fresh test database for the whole session, built by the real migrations."""
+    """Test database built by the real migrations, gentle on the server:
+    - created once, then reset by recreating its schema (no DROP DATABASE every run);
+    - autovacuum + vacuum truncation off on every test table. On Windows a vacuum truncate that hits a file
+      held by another program (antivirus) makes Postgres PANIC; test data is thrown away anyway."""
     admin = await asyncpg.connect(config.dsn("postgres"))
     try:
-        await admin.execute(f'DROP DATABASE IF EXISTS "{config.TEST_DB_NAME}" WITH (FORCE)')
-        await admin.execute(f'CREATE DATABASE "{config.TEST_DB_NAME}"')
-        reset_schema = False
-    except (asyncpg.InsufficientPrivilegeError, asyncpg.ObjectInUseError):
-        reset_schema = True  # e.g. pgAdmin (superuser) is looking at the test DB: wipe its schema instead
+        if not await admin.fetchval("SELECT 1 FROM pg_database WHERE datname = $1", config.TEST_DB_NAME):
+            await admin.execute(f'CREATE DATABASE "{config.TEST_DB_NAME}"')
     finally:
         await admin.close()
     conn = await asyncpg.connect(config.dsn(config.TEST_DB_NAME))
-    if reset_schema:
-        await conn.execute("DROP SCHEMA public CASCADE; CREATE SCHEMA public")
+    await conn.execute("DROP SCHEMA public CASCADE; CREATE SCHEMA public")
     await init_conn(conn)
     await migrate(conn, config.MIGRATIONS_DIR)
+    for table in await conn.fetch("SELECT tablename FROM pg_tables WHERE schemaname = 'public'"):
+        await conn.execute(f'ALTER TABLE "{table["tablename"]}" SET (autovacuum_enabled = false, vacuum_truncate = false)')
     yield conn
     await conn.close()
 
