@@ -77,13 +77,17 @@
     "space": {
       "not_found": "Space not found.",
       "owner_required": "Only the space owner can do this."
+    },
+    "date": {
+      "not_found": "Date not found."
     }
   },
   "nav": {
     "home": "Home",
     "space": "Space",
     "settings": "Settings",
-    "admin": "Admin"
+    "admin": "Admin",
+    "dates": "Dates"
   },
   "space": {
     "none": "You're not in any space yet. Ask someone for an invite.",
@@ -102,5 +106,27 @@
     "name": "Space name",
     "owner": "Owner",
     "create": "Create space"
+  },
+  "dates": {
+    "title": "Our dates",
+    "new": "New date",
+    "edit": "Edit",
+    "delete": "Delete",
+    "save": "Save",
+    "empty": "No dates yet. Add your first with +.",
+    "multiDay": "Multi-day (trip)",
+    "confirmDelete": "Delete this date? (you can restore it from the trash for 30 days)",
+    "invalid": "Check: {fields}",
+    "count": {
+      "one": "{count} date",
+      "other": "{count} dates"
+    },
+    "field": {
+      "title": "Title",
+      "starts_at": "When",
+      "ends_at": "Until",
+      "place_name": "Where",
+      "cost": "Cost (€)"
+    }
   }
 }

@@ -79,13 +79,17 @@
     "space": {
       "not_found": "Prostor ne obstaja.",
       "owner_required": "To lahko naredi samo lastnik prostora."
+    },
+    "date": {
+      "not_found": "Zmenek ne obstaja."
     }
   },
   "nav": {
     "home": "Domov",
     "space": "Prostor",
     "settings": "Nastavitve",
-    "admin": "Admin"
+    "admin": "Admin",
+    "dates": "Zmenki"
   },
   "space": {
     "none": "Še nisi v nobenem prostoru. Prosi nekoga za povabilo.",
@@ -104,5 +108,29 @@
     "name": "Ime prostora",
     "owner": "Lastnik",
     "create": "Ustvari prostor"
+  },
+  "dates": {
+    "title": "Najini zmenki",
+    "new": "Nov zmenek",
+    "edit": "Uredi",
+    "delete": "Izbriši",
+    "save": "Shrani",
+    "empty": "Še ni zmenkov. Dodaj prvega s +.",
+    "multiDay": "Večdnevni (izlet)",
+    "confirmDelete": "Res izbrišem ta zmenek? (30 dni ga lahko obnoviš iz koša)",
+    "invalid": "Preveri: {fields}",
+    "count": {
+      "one": "{count} zmenek",
+      "two": "{count} zmenka",
+      "few": "{count} zmenki",
+      "other": "{count} zmenkov"
+    },
+    "field": {
+      "title": "Naslov",
+      "starts_at": "Kdaj",
+      "ends_at": "Do",
+      "place_name": "Kje",
+      "cost": "Strošek (€)"
+    }
   }
 }
