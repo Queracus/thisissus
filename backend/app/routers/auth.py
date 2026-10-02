@@ -54,6 +54,9 @@ async def register_verify(body: RegisterIn, request: Request, response: Response
     async with conn.transaction():
         await register_passkey(conn, tok["user_id"], body.credential)
         await use_token(conn, body.token)
+        if tok["space_id"]:
+            await conn.execute("INSERT INTO space_members (space_id, user_id, role) VALUES ($1, $2, 'member') ON CONFLICT DO NOTHING",
+                               tok["space_id"], tok["user_id"])
         return await _login(conn, request, response, tok["user_id"])
 
 

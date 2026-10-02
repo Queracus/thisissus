@@ -17,16 +17,17 @@ def new_token() -> tuple[str, bytes]:
     return raw, hash_token(raw)
 
 
-async def issue_token(conn: asyncpg.Connection, kind: str, user_id: int, ttl: timedelta) -> str:
+async def issue_token(conn: asyncpg.Connection, kind: str, user_id: int | None, ttl: timedelta, space_id: int | None = None) -> str:
     raw, h = new_token()
-    await conn.execute("INSERT INTO auth_tokens (token_hash, kind, user_id, expires_at) VALUES ($1, $2, $3, now() + $4)", h, kind, user_id, ttl)
+    await conn.execute("INSERT INTO auth_tokens (token_hash, kind, user_id, expires_at, space_id) VALUES ($1, $2, $3, now() + $4, $5)",
+                       h, kind, user_id, ttl, space_id)
     return raw
 
 
-async def invite_new_user(conn: asyncpg.Connection, display_name: str, ttl: timedelta = timedelta(days=7)) -> str:
-    """Create a user without a passkey yet and return their one-time invite token."""
+async def invite_new_user(conn: asyncpg.Connection, display_name: str, ttl: timedelta = timedelta(days=7), space_id: int | None = None) -> str:
+    """Create a user without a passkey yet and return their one-time invite token (joins space_id on registration)."""
     user_id = await conn.fetchval("INSERT INTO users (display_name) VALUES ($1) RETURNING id", display_name)
-    return await issue_token(conn, "invite", user_id, ttl)
+    return await issue_token(conn, "invite", user_id, ttl, space_id)
 
 
 async def valid_token(conn: asyncpg.Connection, raw: str, kinds: tuple[str, ...] = ("invite",)) -> asyncpg.Record:

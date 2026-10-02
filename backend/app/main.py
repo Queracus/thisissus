@@ -8,7 +8,7 @@ from fastapi.responses import JSONResponse
 from app import config
 from app.errors import ApiError, api_error_handler, validation_error_handler
 from app.migrator import migrate
-from app.routers import admin, auth, health, me
+from app.routers import admin, auth, health, me, spaces
 
 
 @asynccontextmanager
@@ -35,5 +35,5 @@ async def reject_foreign_origin(request: Request, call_next):
 
 
 # Every router must be listed here, otherwise it is never mounted.
-for r in (health, auth, me, admin):
+for r in (health, auth, me, admin, spaces):
     app.include_router(r.router, prefix="/api")

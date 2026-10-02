@@ -1,7 +1,19 @@
 {
-  "app": { "title": "Thisissus 💌" },
-  "common": { "back": "Nazaj", "copyHint": "(klikni za kopiranje, velja {valid})", "days7": "7 dni", "hours24": "24 ur" },
-  "home": { "hello": "Živjo, {name}!", "settings": "Nastavitve", "admin": "Admin", "logout": "Odjava" },
+  "app": {
+    "title": "Thisissus 💌"
+  },
+  "common": {
+    "back": "Nazaj",
+    "copyHint": "(klikni za kopiranje, velja {valid})",
+    "days7": "7 dni",
+    "hours24": "24 ur"
+  },
+  "home": {
+    "hello": "Živjo, {name}!",
+    "settings": "Nastavitve",
+    "admin": "Admin",
+    "logout": "Odjava"
+  },
   "login": {
     "passkey": "Prijava s passkey",
     "usePin": "Uporabi PIN",
@@ -25,7 +37,13 @@
     "pinSaved": "PIN shranjen ✓",
     "language": "Jezik"
   },
-  "devices": { "title": "Naprave", "unknown": "Neznana naprava", "current": "ta naprava", "revoke": "Odjavi", "revokeOthers": "Odjavi vse ostale" },
+  "devices": {
+    "title": "Naprave",
+    "unknown": "Neznana naprava",
+    "current": "ta naprava",
+    "revoke": "Odjavi",
+    "revokeOthers": "Odjavi vse ostale"
+  },
   "admin": {
     "title": "Admin",
     "newUserName": "Ime novega uporabnika",
@@ -34,7 +52,12 @@
     "noPasskey": "brez passkey",
     "recoveryLink": "Povezava za obnovo",
     "unlockPin": "Odkleni PIN",
-    "users": { "one": "{count} uporabnik", "two": "{count} uporabnika", "few": "{count} uporabniki", "other": "{count} uporabnikov" }
+    "users": {
+      "one": "{count} uporabnik",
+      "two": "{count} uporabnika",
+      "few": "{count} uporabniki",
+      "other": "{count} uporabnikov"
+    }
   },
   "error": {
     "generic": "Ni uspelo ({code})",
@@ -47,7 +70,39 @@
       "passkey_unknown": "Tega passkey-ja ne poznamo.",
       "forbidden": "Za to nimaš pravic."
     },
-    "admin": { "last_admin": "Vsaj en admin mora ostati." },
-    "validation": { "invalid": "Preveri vnos: ime 3–30 znakov, PIN 6 številk." }
+    "admin": {
+      "last_admin": "Vsaj en admin mora ostati."
+    },
+    "validation": {
+      "invalid": "Preveri vnos: ime 3–30 znakov, PIN 6 številk."
+    },
+    "space": {
+      "not_found": "Prostor ne obstaja.",
+      "owner_required": "To lahko naredi samo lastnik prostora."
+    }
+  },
+  "nav": {
+    "home": "Domov",
+    "space": "Prostor",
+    "settings": "Nastavitve",
+    "admin": "Admin"
+  },
+  "space": {
+    "none": "Še nisi v nobenem prostoru. Prosi nekoga za povabilo.",
+    "members": "Člani",
+    "owner": "lastnik",
+    "member": "član",
+    "inviteNew": "Povabi novo osebo",
+    "inviteNewPlaceholder": "Ime osebe",
+    "inviteExisting": "Povezava za obstoječega uporabnika",
+    "rename": "Preimenuj",
+    "join": "Pridruži se prostoru",
+    "joined": "Pridružen ✓"
+  },
+  "adminSpaces": {
+    "title": "Prostori",
+    "name": "Ime prostora",
+    "owner": "Lastnik",
+    "create": "Ustvari prostor"
   }
 }

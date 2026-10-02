@@ -1,11 +1,12 @@
 import { useQueryClient } from '@tanstack/react-query'
-import { Link } from 'react-router-dom'
 import { logout, useMe } from '../auth.js'
 import Screen, { Button } from '../components/Screen.jsx'
 import { useT } from '../i18n/index.jsx'
+import { useSpaces } from '../spaces.jsx'
 
 export default function Home() {
   const { data: me } = useMe()
+  const { active } = useSpaces()
   const { t } = useT()
   const qc = useQueryClient()
 
@@ -17,8 +18,7 @@ export default function Home() {
   return (
     <Screen title={t('app.title')}>
       <p>{t('home.hello', { name: me.display_name })}</p>
-      <Link to="/settings" className="text-sm text-rose-500 underline">{t('home.settings')}</Link>
-      {me.permissions.includes('manage_users') && <Link to="/admin" className="text-sm text-rose-500 underline">{t('home.admin')}</Link>}
+      {!active && <p className="max-w-xs text-sm">{t('space.none')}</p>}
       <Button onClick={onLogout}>{t('home.logout')}</Button>
     </Screen>
   )

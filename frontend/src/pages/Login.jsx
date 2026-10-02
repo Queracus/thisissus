@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
-import { Navigate } from 'react-router-dom'
+import { Navigate, useLocation } from 'react-router-dom'
 import { loginWithPasskey, loginWithPin, useMe } from '../auth.js'
 import Screen, { Button, Input, LinkButton } from '../components/Screen.jsx'
 import { useT } from '../i18n/index.jsx'
@@ -8,6 +8,7 @@ import { useT } from '../i18n/index.jsx'
 export default function Login() {
   const { data: me } = useMe()
   const { t, tError } = useT()
+  const from = useLocation().state?.from || '/'
   const qc = useQueryClient()
   const [usePin, setUsePin] = useState(false)
   const [username, setUsername] = useState('')
@@ -15,7 +16,7 @@ export default function Login() {
   const [error, setError] = useState(null)
   const [busy, setBusy] = useState(false)
 
-  if (me) return <Navigate to="/" replace />
+  if (me) return <Navigate to={from} replace />
 
   async function attempt(login) {
     setBusy(true)

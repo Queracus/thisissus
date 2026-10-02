@@ -9,6 +9,8 @@ import Invite from './pages/Invite.jsx'
 import Login from './pages/Login.jsx'
 import Settings from './pages/Settings.jsx'
 import Admin from './pages/Admin.jsx'
+import Join from './pages/Join.jsx'
+import Space from './pages/Space.jsx'
 import './index.css'
 
 const queryClient = new QueryClient()
@@ -22,6 +24,8 @@ createRoot(document.getElementById('root')).render(
           <Route path="/" element={<RequireAuth><Home /></RequireAuth>} />
           <Route path="/settings" element={<RequireAuth><Settings /></RequireAuth>} />
           <Route path="/admin" element={<RequireAuth><Admin /></RequireAuth>} />
+          <Route path="/space" element={<RequireAuth><Space /></RequireAuth>} />
+          <Route path="/join/:token" element={<RequireAuth><Join /></RequireAuth>} />
           <Route path="/login" element={<Login />} />
           <Route path="/invite/:token" element={<Invite />} />
           <Route path="/recover/:token" element={<Invite recovery />} />

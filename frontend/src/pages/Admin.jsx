@@ -17,6 +17,41 @@ function CopyLink({ url, valid }) {
   )
 }
 
+function SpacesAdmin({ users }) {
+  const { t } = useT()
+  const qc = useQueryClient()
+  const spaces = useQuery({ queryKey: ['admin', 'spaces'], queryFn: () => api('/admin/spaces') })
+  const [name, setName] = useState('')
+  const [ownerId, setOwnerId] = useState('')
+
+  async function onCreate(e) {
+    e.preventDefault()
+    await send('POST', '/admin/spaces', { name, owner_id: Number(ownerId) })
+    setName('')
+    qc.invalidateQueries({ queryKey: ['admin', 'spaces'] })
+    qc.invalidateQueries({ queryKey: ['spaces'] })
+  }
+
+  return (
+    <section className="flex flex-col gap-2">
+      <h2 className="font-bold">{t('adminSpaces.title')}</h2>
+      <form onSubmit={onCreate} className="flex flex-col items-center gap-2">
+        <Input placeholder={t('adminSpaces.name')} value={name} onChange={(e) => setName(e.target.value)} />
+        <select value={ownerId} onChange={(e) => setOwnerId(e.target.value)} className="w-64 rounded-xl border border-rose-200 bg-white px-4 py-3">
+          <option value="">{t('adminSpaces.owner')}</option>
+          {users?.map((u) => <option key={u.id} value={u.id}>{u.display_name}</option>)}
+        </select>
+        <Button type="submit" disabled={!name || !ownerId}>{t('adminSpaces.create')}</Button>
+      </form>
+      {spaces.data?.map((s) => (
+        <div key={s.id} className="rounded-xl bg-white p-3 text-sm shadow-sm">
+          <span className="font-bold">{s.name}</span> <span className="text-rose-400">· {s.members.join(', ')}</span>
+        </div>
+      ))}
+    </section>
+  )
+}
+
 function InviteForm() {
   const { t } = useT()
   const [name, setName] = useState('')
@@ -89,7 +124,7 @@ export default function Admin() {
   if (!me.permissions.includes('manage_users')) return <Navigate to="/" replace />
 
   return (
-    <main className="min-h-screen bg-rose-50 p-4 font-sans text-rose-900">
+    <main className="min-h-[85vh] bg-rose-50 p-4 font-sans text-rose-900">
       <div className="mx-auto flex max-w-md flex-col gap-5">
         <div className="flex items-center justify-between">
           <h1 className="font-display text-3xl italic text-rose-600">{t('admin.title')}</h1>
@@ -100,6 +135,7 @@ export default function Admin() {
         <ul className="flex flex-col gap-2">
           {users.data?.map((u) => <UserRow key={u.id} user={u} roleNames={roles.data?.map((r) => r.name) ?? []} />)}
         </ul>
+        <SpacesAdmin users={users.data} />
       </div>
     </main>
   )

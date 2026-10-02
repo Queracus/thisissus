@@ -1,6 +1,8 @@
 /* Only CSS file: Tailwind v4 entry + font tokens. Style with Tailwind classes. */
 @import "tailwindcss";
 
+html { background: var(--color-rose-50); }
+
 @theme {
   --font-display: "Playfair Display", serif;
   --font-sans: "Quicksand", sans-serif;

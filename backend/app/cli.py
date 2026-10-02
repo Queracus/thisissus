@@ -1,6 +1,6 @@
 """Admin CLI.
 Usage:
-  python -m app.cli bootstrap-admin "<display name>"   new admin user + one-time invite link
+  python -m app.cli bootstrap-admin "<display name>"   new admin user (owner of space 'Midva') + invite link
   python -m app.cli unlock <username>                  clear a PIN lockout
 """
 import asyncio
@@ -21,7 +21,10 @@ async def run(cmd: str, arg: str) -> str:
         await migrate(conn, config.MIGRATIONS_DIR)
         if cmd == "bootstrap-admin":
             token = await invite_new_user(conn, arg)
-            await grant_role(conn, await conn.fetchval("SELECT user_id FROM auth_tokens WHERE token_hash = $1", hash_token(token)), "admin")
+            user_id = await conn.fetchval("SELECT user_id FROM auth_tokens WHERE token_hash = $1", hash_token(token))
+            await grant_role(conn, user_id, "admin")
+            space_id = await conn.fetchval("INSERT INTO spaces (name) VALUES ('Midva') RETURNING id")
+            await conn.execute("INSERT INTO space_members (space_id, user_id, role) VALUES ($1, $2, 'owner')", space_id, user_id)
             return f"{config.ORIGIN}/invite/{token}"
         user_id = await conn.fetchval("SELECT id FROM users WHERE lower(username) = lower($1)", arg)
         if not user_id:

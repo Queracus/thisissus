@@ -1,7 +1,19 @@
 {
-  "app": { "title": "Thisissus 💌" },
-  "common": { "back": "Back", "copyHint": "(click to copy, valid for {valid})", "days7": "7 days", "hours24": "24 hours" },
-  "home": { "hello": "Hi, {name}!", "settings": "Settings", "admin": "Admin", "logout": "Log out" },
+  "app": {
+    "title": "Thisissus 💌"
+  },
+  "common": {
+    "back": "Back",
+    "copyHint": "(click to copy, valid for {valid})",
+    "days7": "7 days",
+    "hours24": "24 hours"
+  },
+  "home": {
+    "hello": "Hi, {name}!",
+    "settings": "Settings",
+    "admin": "Admin",
+    "logout": "Log out"
+  },
   "login": {
     "passkey": "Log in with passkey",
     "usePin": "Use PIN",
@@ -25,7 +37,13 @@
     "pinSaved": "PIN saved ✓",
     "language": "Language"
   },
-  "devices": { "title": "Devices", "unknown": "Unknown device", "current": "this device", "revoke": "Log out", "revokeOthers": "Log out all others" },
+  "devices": {
+    "title": "Devices",
+    "unknown": "Unknown device",
+    "current": "this device",
+    "revoke": "Log out",
+    "revokeOthers": "Log out all others"
+  },
   "admin": {
     "title": "Admin",
     "newUserName": "New user's name",
@@ -34,7 +52,10 @@
     "noPasskey": "no passkey",
     "recoveryLink": "Recovery link",
     "unlockPin": "Unlock PIN",
-    "users": { "one": "{count} user", "other": "{count} users" }
+    "users": {
+      "one": "{count} user",
+      "other": "{count} users"
+    }
   },
   "error": {
     "generic": "Something went wrong ({code})",
@@ -47,7 +68,39 @@
       "passkey_unknown": "We don't know this passkey.",
       "forbidden": "You don't have permission for this."
     },
-    "admin": { "last_admin": "At least one admin must remain." },
-    "validation": { "invalid": "Check your input: username 3–30 characters, PIN 6 digits." }
+    "admin": {
+      "last_admin": "At least one admin must remain."
+    },
+    "validation": {
+      "invalid": "Check your input: username 3–30 characters, PIN 6 digits."
+    },
+    "space": {
+      "not_found": "Space not found.",
+      "owner_required": "Only the space owner can do this."
+    }
+  },
+  "nav": {
+    "home": "Home",
+    "space": "Space",
+    "settings": "Settings",
+    "admin": "Admin"
+  },
+  "space": {
+    "none": "You're not in any space yet. Ask someone for an invite.",
+    "members": "Members",
+    "owner": "owner",
+    "member": "member",
+    "inviteNew": "Invite a new person",
+    "inviteNewPlaceholder": "Person's name",
+    "inviteExisting": "Link for an existing user",
+    "rename": "Rename",
+    "join": "Join space",
+    "joined": "Joined ✓"
+  },
+  "adminSpaces": {
+    "title": "Spaces",
+    "name": "Space name",
+    "owner": "Owner",
+    "create": "Create space"
   }
 }

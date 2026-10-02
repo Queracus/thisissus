@@ -71,3 +71,27 @@ async def recovery_link(user_id: int, _=Depends(require_permission("issue_tokens
     if not await conn.fetchval("SELECT 1 FROM users WHERE id = $1", user_id):
         raise ApiError(404, "not_found")
     return {"url": f"{config.ORIGIN}/recover/{await issue_token(conn, 'recovery', user_id, timedelta(hours=24))}"}
+
+
+class SpaceIn(BaseModel):
+    name: str = Field(min_length=1, max_length=60)
+    owner_id: int
+
+
+@router.post("/spaces")
+async def create_space(body: SpaceIn, _=Depends(require_permission("manage_spaces")), conn: asyncpg.Connection = Depends(get_conn)):
+    async with conn.transaction():
+        space_id = await conn.fetchval("INSERT INTO spaces (name) VALUES ($1) RETURNING id", body.name)
+        try:
+            await conn.execute("INSERT INTO space_members (space_id, user_id, role) VALUES ($1, $2, 'owner')", space_id, body.owner_id)
+        except asyncpg.ForeignKeyViolationError:
+            raise ApiError(404, "not_found")
+    return {"id": space_id}
+
+
+@router.get("/spaces")
+async def list_spaces(_=Depends(require_permission("manage_spaces")), conn: asyncpg.Connection = Depends(get_conn)):
+    rows = await conn.fetch(
+        """SELECT s.id, s.name, array_agg(u.display_name ORDER BY m.role DESC, m.joined_at) AS members
+           FROM spaces s JOIN space_members m ON m.space_id = s.id JOIN users u ON u.id = m.user_id GROUP BY s.id ORDER BY s.id""")
+    return [dict(r) for r in rows]
