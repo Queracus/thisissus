@@ -29,7 +29,7 @@ Our self-hosted dashboard for dates, date ideas and recipes. Spec: PRD issue #1;
 ## Run
 
 ```bash
-cd backend && .venv/Scripts/python -m uvicorn app.main:app --reload --port 8000
+cd backend && .venv/Scripts/python -m uvicorn app.main:app --reload --reload-dir app --reload-dir migrations --port 8000
 cd frontend && npm run dev     # http://localhost:5173, proxies /api to :8000
 ```
 
@@ -39,6 +39,7 @@ cd frontend && npm run dev     # http://localhost:5173, proxies /api to :8000
 cd backend && .venv/Scripts/python -m app.cli bootstrap-admin "Your name"
 ```
 Open the printed `/invite/<token>` link (valid 7 days, single use) and create a passkey. Later, log in at `/login`.
+Set a fallback PIN under Settings. Unlock a locked PIN: `.venv/Scripts/python -m app.cli unlock <username>`.
 Passkeys are bound to `RP_ID`/`ORIGIN` from `.env`, so ones made on `localhost` don't work on the production domain.
 
 ## Test

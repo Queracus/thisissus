@@ -16,3 +16,11 @@ export function Button(props) {
     />
   )
 }
+
+export function Input(props) {
+  return <input {...props} className="w-64 rounded-xl border border-rose-200 bg-white px-4 py-3 text-center outline-rose-400" />
+}
+
+export function LinkButton(props) {
+  return <button {...props} className="text-sm text-rose-500 underline" />
+}

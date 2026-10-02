@@ -25,4 +25,8 @@ export async function loginWithPasskey() {
   return post('/auth/passkey/login/verify', { credential })
 }
 
+export const loginWithPin = (username, pin) => post('/auth/pin/login', { username, pin })
+
+export const setPin = (username, pin) => api('/me/pin', { method: 'PUT', body: JSON.stringify({ username, pin }) })
+
 export const logout = () => post('/auth/logout')

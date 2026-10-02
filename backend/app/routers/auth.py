@@ -3,6 +3,7 @@ from fastapi import APIRouter, Depends, Request, Response
 from pydantic import BaseModel
 
 from app.auth.deps import current_user
+from app.auth.pin import check_pin
 from app.auth.passkeys import authenticate, authentication_options, register_passkey, registration_options
 from app.auth.sessions import COOKIE, create_session, delete_session, set_session_cookie
 from app.auth.tokens import use_token, valid_token
@@ -22,6 +23,11 @@ class RegisterIn(BaseModel):
 
 class LoginIn(BaseModel):
     credential: dict
+
+
+class PinLoginIn(BaseModel):
+    username: str
+    pin: str
 
 
 def me_out(user: asyncpg.Record) -> dict:
@@ -57,6 +63,12 @@ async def login_options(conn: asyncpg.Connection = Depends(get_conn)):
 async def login_verify(body: LoginIn, request: Request, response: Response, conn: asyncpg.Connection = Depends(get_conn)):
     async with conn.transaction():
         return await _login(conn, request, response, await authenticate(conn, body.credential))
+
+
+@router.post("/pin/login")
+async def pin_login(body: PinLoginIn, request: Request, response: Response, conn: asyncpg.Connection = Depends(get_conn)):
+    user_id = await check_pin(conn, body.username, body.pin, request.client.host)
+    return await _login(conn, request, response, user_id)
 
 
 @router.post("/logout")
