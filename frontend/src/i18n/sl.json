@@ -344,5 +344,13 @@
         "cancelled": "{actor} je preklical/a predlog za {title}"
       }
     }
+  },
+  "push": {
+    "on": "Obvestila na tej napravi: vklopljena",
+    "off": "Vklopi obvestila na tej napravi",
+    "iosHint": "Za obvestila na iPhonu: Deli → Dodaj na začetni zaslon, nato odpri Thisissus z ikone.",
+    "unsupported": "Ta brskalnik ne podpira obvestil.",
+    "denied": "Obvestila so blokirana v nastavitvah brskalnika.",
+    "failed": "Vklop obvestil ni uspel."
   }
 }

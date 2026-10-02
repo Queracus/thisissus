@@ -16,6 +16,11 @@ RP_NAME = "Thisissus"
 ORIGIN = os.environ.get("ORIGIN", "http://localhost:5173")
 COOKIE_SECURE = os.environ.get("COOKIE_SECURE", "0") == "1"
 
+# Web push (generate with: python -m app.cli vapid-keys)
+VAPID_PUBLIC_KEY = os.environ.get("VAPID_PUBLIC_KEY", "")
+VAPID_PRIVATE_KEY = os.environ.get("VAPID_PRIVATE_KEY", "")
+VAPID_SUBJECT = os.environ.get("VAPID_SUBJECT", "mailto:admin@localhost")
+
 
 def dsn(db_name: str = DB_NAME) -> str:
     e = os.environ

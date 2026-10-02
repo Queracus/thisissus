@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import { api } from '../api.js'
 import { setPin, useMe } from '../auth.js'
 import Devices from '../components/Devices.jsx'
+import PushToggle from '../components/PushToggle.jsx'
 import Screen, { Button, Input } from '../components/Screen.jsx'
 import { LOCALES, useT } from '../i18n/index.jsx'
 
@@ -48,6 +49,7 @@ export default function Settings() {
   return (
     <Screen title={t('settings.title')}>
       <LanguageSwitch />
+      <PushToggle />
       <form className="flex flex-col items-center gap-3" onSubmit={onSave}>
         <p className="text-sm">{t('settings.pinInfo')}</p>
         <Input placeholder={t('login.username')} autoComplete="username" value={username} onChange={(e) => setUsername(e.target.value)} />

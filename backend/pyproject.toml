@@ -12,6 +12,7 @@ dependencies = [
     "pillow",
     "pillow-heif",
     "python-multipart",
+    "pywebpush",
 ]
 
 [project.optional-dependencies]

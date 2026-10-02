@@ -20,7 +20,10 @@ import NewIdea from './pages/NewIdea.jsx'
 import Trash from './pages/Trash.jsx'
 import Join from './pages/Join.jsx'
 import Space from './pages/Space.jsx'
+import { registerSW } from 'virtual:pwa-register'
 import './index.css'
+
+registerSW({ immediate: true })
 
 const queryClient = new QueryClient()
 

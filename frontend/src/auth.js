@@ -1,6 +1,7 @@
 import { startAuthentication, startRegistration } from '@simplewebauthn/browser'
 import { useQuery } from '@tanstack/react-query'
 import { api } from './api.js'
+import { disablePush } from './push.js'
 
 const post = (path, body) => api(path, { method: 'POST', body: JSON.stringify(body ?? {}) })
 
@@ -29,4 +30,7 @@ export const loginWithPin = (username, pin) => post('/auth/pin/login', { usernam
 
 export const setPin = (username, pin) => api('/me/pin', { method: 'PUT', body: JSON.stringify({ username, pin }) })
 
-export const logout = () => post('/auth/logout')
+export async function logout() {
+  await disablePush().catch(() => {})
+  return post('/auth/logout')
+}

@@ -336,5 +336,13 @@
         "cancelled": "{actor} cancelled the proposal for {title}"
       }
     }
+  },
+  "push": {
+    "on": "Notifications on this device: on",
+    "off": "Turn on notifications on this device",
+    "iosHint": "For notifications on iPhone: Share → Add to Home Screen, then open Thisissus from the icon.",
+    "unsupported": "This browser doesn't support notifications.",
+    "denied": "Notifications are blocked in the browser settings.",
+    "failed": "Couldn't turn on notifications."
   }
 }
