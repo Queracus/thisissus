@@ -110,6 +110,19 @@ Point `DB_NAME` at `thisissus_restored` (or rename the databases), start the app
 
 Add a new file to `backend/migrations/` with the next number, e.g. `013_video.sql`. New files are applied at startup, one transaction per file, and recorded in `schema_migrations`. **Never edit a file that has already run.**
 
+## Deploy (home server, Ubuntu + Docker)
+
+1. Install Docker (`curl -fsSL https://get.docker.com | sh`) and the Postgres 17 client for backups (`apt install postgresql-client-17`).
+2. Cloudflare: add the `.si` domain (move its nameservers to Cloudflare), then Zero Trust → Networks → Tunnels → create a tunnel,
+   copy its token, and add a public hostname `yourdomain.si` → service `http://web:80`.
+3. `git clone` the repo, `cp .env.example .env` and fill in:
+   `DB_PASSWORD`, `RP_ID=yourdomain.si`, `ORIGIN=https://yourdomain.si`, `COOKIE_SECURE=1`, new `VAPID_*` keys
+   (`python -m app.cli vapid-keys`, or `docker compose run --rm api python -m app.cli vapid-keys`), `CLOUDFLARE_TUNNEL_TOKEN`, `BACKUP_DIR`.
+4. `docker compose up -d --build`, then `docker compose exec api python -m app.cli bootstrap-admin "Your name"` and open the link on your phone.
+5. Updates: `git pull && docker compose up -d --build` (migrations run automatically on start).
+
+Postgres listens only on `127.0.0.1:5432` (for `ops/backup.sh` on the host); the internet only reaches the app through the tunnel.
+
 ## Things only you can do
 
 - [ ] Install the prerequisites above (including `ffmpeg`) on every machine that runs the app.

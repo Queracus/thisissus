@@ -1,0 +1,62 @@
+# Production stack for the home server (Ubuntu + Docker). From the repo root:
+#   cp .env.example .env   # fill in, see README → Deploy
+#   docker compose up -d --build
+# Services: postgres · api (FastAPI) · worker (jobs) · web (nginx: SPA + /api proxy) · cloudflared (tunnel to the .si domain)
+services:
+  postgres:
+    image: postgres:17
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    command: ["postgres", "-c", "shared_buffers=1GB", "-c", "work_mem=16MB"]
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:5432:5432"   # only for ops/backup.sh on the host; not reachable from the network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 10s
+      retries: 10
+
+  api:
+    build: ./backend
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DB_HOST: postgres
+      DB_PORT: "5432"
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--proxy-headers", "--forwarded-allow-ips", "*"]
+    volumes:
+      - ${BACKUP_DIR:-./backups}:${BACKUP_DIR:-/backups}:ro   # admin panel reads backup-status.json
+    depends_on:
+      postgres: { condition: service_healthy }
+
+  worker:
+    build: ./backend
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DB_HOST: postgres
+      DB_PORT: "5432"
+      EXPORT_DIR: /export
+    command: ["python", "-m", "app.worker"]
+    volumes:
+      - ${EXPORT_HOST_DIR:-./export}:/export
+    depends_on:
+      postgres: { condition: service_healthy }
+
+  web:
+    build: ./frontend
+    restart: unless-stopped
+    depends_on: [api]
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    restart: unless-stopped
+    command: ["tunnel", "--no-autoupdate", "run", "--token", "${CLOUDFLARE_TUNNEL_TOKEN}"]
+    depends_on: [web]
+
+volumes:
+  pgdata:
