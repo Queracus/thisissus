@@ -93,6 +93,9 @@
     },
     "trash": {
       "not_found": "Tega ni v košu."
+    },
+    "idea": {
+      "not_found": "Ideja ne obstaja."
     }
   },
   "nav": {
@@ -102,7 +105,8 @@
     "admin": "Admin",
     "dates": "Zmenki",
     "map": "Zemljevid",
-    "trash": "Koš"
+    "trash": "Koš",
+    "ideas": "Ideje"
   },
   "space": {
     "none": "Še nisi v nobenem prostoru. Prosi nekoga za povabilo.",
@@ -210,13 +214,45 @@
     "confirmPurge": "Za vedno izbrišem? Tega ni mogoče razveljaviti.",
     "type": {
       "date": "Zmenek",
-      "photo": "Fotka iz"
+      "photo": "Fotka iz",
+      "idea": "Ideja"
     },
     "daysLeft": {
       "one": "še {count} dan",
       "two": "še {count} dneva",
       "few": "še {count} dnevi",
       "other": "še {count} dni"
+    }
+  },
+  "ideas": {
+    "title": "Ideje za zmenke",
+    "empty": "Še ni idej. Dodaj prvo s +.",
+    "new": "Nova ideja",
+    "ask": "Greva na ...",
+    "askPlaceholder": "piknik ob jezeru",
+    "next": "Naprej",
+    "detailsHint": "Dodaj podrobnosti (vse je neobvezno).",
+    "save": "Shrani idejo",
+    "suggestedBy": "predlaga {name}",
+    "confirmDelete": "Izbrišem to idejo? (30 dni je v košu)",
+    "status": {
+      "idea": "ideja",
+      "pending": "čaka odgovor",
+      "scheduled": "dogovorjeno",
+      "archived": "arhiv"
+    },
+    "season": {
+      "spring": "pomlad",
+      "summer": "poletje",
+      "autumn": "jesen",
+      "winter": "zima"
+    },
+    "field": {
+      "title": "Ideja",
+      "description": "Opis",
+      "url": "Povezava",
+      "est_cost": "Približni strošek (€)",
+      "season": "Najboljši čas"
     }
   }
 }

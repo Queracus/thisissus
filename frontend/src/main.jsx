@@ -12,7 +12,10 @@ import Admin from './pages/Admin.jsx'
 import DateDetail from './pages/DateDetail.jsx'
 import DateForm from './pages/DateForm.jsx'
 import Dates from './pages/Dates.jsx'
+import IdeaDetail from './pages/IdeaDetail.jsx'
+import Ideas from './pages/Ideas.jsx'
 import MapPage from './pages/Map.jsx'
+import NewIdea from './pages/NewIdea.jsx'
 import Trash from './pages/Trash.jsx'
 import Join from './pages/Join.jsx'
 import Space from './pages/Space.jsx'
@@ -32,6 +35,9 @@ createRoot(document.getElementById('root')).render(
           <Route path="/space" element={<RequireAuth><Space /></RequireAuth>} />
           <Route path="/dates" element={<RequireAuth><Dates /></RequireAuth>} />
           <Route path="/map" element={<RequireAuth><MapPage /></RequireAuth>} />
+          <Route path="/ideas" element={<RequireAuth><Ideas /></RequireAuth>} />
+          <Route path="/ideas/new" element={<RequireAuth><NewIdea /></RequireAuth>} />
+          <Route path="/ideas/:id" element={<RequireAuth><IdeaDetail /></RequireAuth>} />
           <Route path="/trash" element={<RequireAuth><Trash /></RequireAuth>} />
           <Route path="/dates/new" element={<RequireAuth><DateForm /></RequireAuth>} />
           <Route path="/dates/:id" element={<RequireAuth><DateDetail /></RequireAuth>} />

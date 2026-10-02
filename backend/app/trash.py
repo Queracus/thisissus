@@ -18,6 +18,13 @@ async def _purge_media(conn: asyncpg.Connection, media_id: int) -> None:
 
 
 TYPES = {
+    "idea": {
+        "list": "SELECT 'idea' AS type, id, title AS label, deleted_at FROM ideas WHERE space_id = $1 AND deleted_at IS NOT NULL",
+        "space": "SELECT space_id FROM ideas WHERE id = $1 AND deleted_at IS NOT NULL",
+        "restore": "UPDATE ideas SET deleted_at = NULL WHERE id = $1",
+        "expired": "SELECT id FROM ideas WHERE deleted_at < now() - make_interval(days => $1)",
+        "purge": lambda conn, idea_id: conn.execute("DELETE FROM ideas WHERE id = $1", idea_id),
+    },
     "date": {
         "list": "SELECT 'date' AS type, id, title AS label, deleted_at FROM dates WHERE space_id = $1 AND deleted_at IS NOT NULL",
         "space": "SELECT space_id FROM dates WHERE id = $1 AND deleted_at IS NOT NULL",

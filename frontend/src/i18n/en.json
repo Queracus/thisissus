@@ -91,6 +91,9 @@
     },
     "trash": {
       "not_found": "Not in the trash."
+    },
+    "idea": {
+      "not_found": "Idea not found."
     }
   },
   "nav": {
@@ -100,7 +103,8 @@
     "admin": "Admin",
     "dates": "Dates",
     "map": "Map",
-    "trash": "Trash"
+    "trash": "Trash",
+    "ideas": "Ideas"
   },
   "space": {
     "none": "You're not in any space yet. Ask someone for an invite.",
@@ -206,11 +210,43 @@
     "confirmPurge": "Delete forever? This can't be undone.",
     "type": {
       "date": "Date",
-      "photo": "Photo from"
+      "photo": "Photo from",
+      "idea": "Idea"
     },
     "daysLeft": {
       "one": "{count} day left",
       "other": "{count} days left"
+    }
+  },
+  "ideas": {
+    "title": "Date ideas",
+    "empty": "No ideas yet. Add the first with +.",
+    "new": "New idea",
+    "ask": "Shall we go ...",
+    "askPlaceholder": "picnic by the lake",
+    "next": "Next",
+    "detailsHint": "Add details (all optional).",
+    "save": "Save idea",
+    "suggestedBy": "suggested by {name}",
+    "confirmDelete": "Delete this idea? (it stays in the trash for 30 days)",
+    "status": {
+      "idea": "idea",
+      "pending": "waiting for answer",
+      "scheduled": "scheduled",
+      "archived": "archived"
+    },
+    "season": {
+      "spring": "spring",
+      "summer": "summer",
+      "autumn": "autumn",
+      "winter": "winter"
+    },
+    "field": {
+      "title": "Idea",
+      "description": "Description",
+      "url": "Link",
+      "est_cost": "Estimated cost (€)",
+      "season": "Best time"
     }
   }
 }

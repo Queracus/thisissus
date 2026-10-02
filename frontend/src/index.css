@@ -4,6 +4,18 @@
 html { background: var(--color-rose-50); }
 
 @theme {
+  /* From the original invite page: floating hearts + card pop-in. Use as animate-float-up / animate-pop-in. */
+  --animate-float-up: float-up linear infinite;
+  --animate-pop-in: pop-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  @keyframes float-up {
+    0% { transform: translateY(110vh) rotate(0deg) scale(0.6); opacity: 0.2; }
+    50% { opacity: 0.5; }
+    100% { transform: translateY(-10vh) rotate(360deg) scale(1); opacity: 0; }
+  }
+  @keyframes pop-in {
+    from { opacity: 0; transform: scale(0.92) translateY(20px); }
+    to { opacity: 1; transform: none; }
+  }
   --font-display: "Playfair Display", serif;
   --font-sans: "Quicksand", sans-serif;
 }
