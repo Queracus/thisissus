@@ -1,11 +1,32 @@
 # Thisissus 💌
 
-Our self-hosted dashboard for dates, date ideas and recipes. Spec: PRD issue #1; work is split into issues #2–#37.
+Our self-hosted dashboard for dates, date ideas and recipes, for a couple and later family and friends.
+Spec: PRD issue #1; work is split into issues #2–#37.
 
-- **Backend:** FastAPI + asyncpg (hand-written SQL), Postgres 17
-- **Worker:** same codebase, `python -m app.worker` (photo/video processing, push, reminders)
-- **Frontend:** React + Vite (plain JS) + Tailwind v4
+## What it does
+
+- **Dates We've Had:** time/place/map pin, photos and videos, each partner's rating, notes and "would do again", tags, cost, filters, map, "On this day".
+- **Date Ideas:** the original "Greva na …?" invite becomes the way to add an idea. Proposing 1–3 times leads to accept / refuse / counter, then **scheduled**, then **"Šla sva!"**, which creates a pre-filled date. Also a "Surprise us" picker and a calendar.
+- **Recipes:** ingredients, steps, photos, ratings, "Skuhala sva!", import from a URL, servings scaling, a shared shopping list.
+- **Spaces & sharing:** content belongs to a space (e.g. "Midva"). Share one item or a whole section read-only, with an account or through a secret link that expires (1h/1d/1w).
+- **Notifications:** a bell plus phone push (PWA), and reminders the day before a date and for unrated dates and recipes.
+- **Safety:** passkey login with a PIN fallback, a 30-day trash, nightly backups to USB, and a photo export to plain folders.
+
+## Stack
+
+- **Backend:** FastAPI + asyncpg (hand-written SQL), Postgres 17; everything, photos and videos included, lives in Postgres.
+- **Worker:** same codebase, `python -m app.worker`: photo/video processing, push, reminders, trash purge, photo export.
+- **Frontend:** React + Vite (plain JS) + Tailwind v4, an installable PWA.
 - **Original invite page:** `docs/reference/invite-original.html`
+
+```
+backend/app/        FastAPI app: routers/, auth/, media/, policy.py (who may see what), sharing.py, proposals.py (state machine), jobs.py, worker.py
+backend/migrations/ numbered SQL files, applied automatically
+backend/tests/      pytest (real Postgres test database)
+frontend/src/       pages/, components/, i18n/ (sl + en), sw.js (service worker)
+ops/backup.sh       nightly backup
+docker-compose.yml  production stack
+```
 
 ## Prerequisites
 
@@ -18,6 +39,9 @@ Our self-hosted dashboard for dates, date ideas and recipes. Spec: PRD issue #1;
 
 `ffmpeg` and `ffprobe` must be on your `PATH`. The worker uses them to convert videos (HEVC → H.264) and make posters.
 Photos need nothing extra: Pillow and pillow-heif ship as Python wheels.
+
+**Windows + Postgres:** exclude `C:\Program Files\PostgreSQL\17\data` from antivirus real-time scanning
+(Windows Security → Virus & threat protection → Exclusions). A scanner that locks a database file can make Postgres crash.
 
 In the commands below, `PY` is the virtualenv's Python:
 
@@ -41,6 +65,7 @@ In the commands below, `PY` is the virtualenv's Python:
    cd backend
    python -m venv .venv          # Linux: python3 -m venv .venv
    PY -m pip install -e ".[dev]"
+   PY -m app.cli vapid-keys      # paste the two lines into .env (needed for push notifications)
    ```
 4. Frontend:
    ```bash
@@ -67,10 +92,35 @@ The API and the worker both apply new migrations on start.
 cd backend && PY -m app.cli bootstrap-admin "Your name"
 ```
 This creates you as admin and as owner of a first space, "Midva". Open the printed `/invite/<token>` link (valid 7 days, single use) and create a passkey. After that, log in at `/login`.
+Invite your partner from the **Prostor** page ("Povabi novo osebo").
 
 - Set a fallback PIN under Settings.
 - Unlock a locked PIN: `PY -m app.cli unlock <username>` (or "Odkleni PIN" in the admin panel).
 - Passkeys are bound to `RP_ID`/`ORIGIN` from `.env`. Ones made on `localhost` don't work on the production domain.
+
+## CLI
+
+| Command | What it does |
+|---|---|
+| `PY -m app.cli bootstrap-admin "<name>"` | new admin user (owner of space "Midva") + one-time invite link |
+| `PY -m app.cli unlock <username>` | clear a PIN lockout |
+| `PY -m app.cli vapid-keys` | print new web-push keys for `.env` |
+
+## Configuration (`.env`)
+
+| Key | Meaning |
+|---|---|
+| `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME` | Postgres connection |
+| `DB_TEST_NAME` | test database (reused, schema recreated each run) |
+| `RP_ID`, `ORIGIN` | passkey domain + site URL: `localhost` / `http://localhost:5173` in dev, the `.si` domain in production |
+| `COOKIE_SECURE` | `1` in production (HTTPS-only session cookie) |
+| `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT` | web push keys (`app.cli vapid-keys`) and a contact for push services |
+| `TIMEZONE` | for "today", "On this day" and stats (default `Europe/Ljubljana`) |
+| `EXPORT_DIR` | where the photo export goes (default `./export`) |
+| `BACKUP_DIR` | where `ops/backup.sh` writes dumps + `backup-status.json` (the USB drive) |
+| `CLOUDFLARE_TUNNEL_TOKEN`, `EXPORT_HOST_DIR` | Docker deploy only |
+
+`.env` is never committed; `.env.example` lists every key.
 
 ## Test
 
@@ -106,18 +156,24 @@ pg_restore -U thisissus -d thisissus_restored --no-owner /mnt/usb/thisissus/this
 ```
 Point `DB_NAME` at `thisissus_restored` (or rename the databases), start the app, and check a few dates and photos.
 
+**Photo export:** Admin → "Izvoz fotk" writes every original photo and video into `EXPORT_DIR/<space>/zmenki/YYYY/MM/<date>/…`
+and `…/recepti/<recipe>/…`. That way your photos are readable even without the app. Re-runs only add what's new.
+
 ## Database changes
 
-Add a new file to `backend/migrations/` with the next number, e.g. `013_video.sql`. New files are applied at startup, one transaction per file, and recorded in `schema_migrations`. **Never edit a file that has already run.**
+Add a new file to `backend/migrations/` with the next number (the latest is `024_export_runs.sql`, so the next is `025_<what>.sql`).
+New files are applied at startup, one transaction per file, and recorded in `schema_migrations`. **Never edit a file that has already run.**
 
 ## Deploy (home server, Ubuntu + Docker)
+
+> The Docker files are written but have **not been run yet** (issue #36). Expect small fixes on the first `docker compose up`.
 
 1. Install Docker (`curl -fsSL https://get.docker.com | sh`) and the Postgres 17 client for backups (`apt install postgresql-client-17`).
 2. Cloudflare: add the `.si` domain (move its nameservers to Cloudflare), then Zero Trust → Networks → Tunnels → create a tunnel,
    copy its token, and add a public hostname `yourdomain.si` → service `http://web:80`.
 3. `git clone` the repo, `cp .env.example .env` and fill in:
    `DB_PASSWORD`, `RP_ID=yourdomain.si`, `ORIGIN=https://yourdomain.si`, `COOKIE_SECURE=1`, new `VAPID_*` keys
-   (`python -m app.cli vapid-keys`, or `docker compose run --rm api python -m app.cli vapid-keys`), `CLOUDFLARE_TUNNEL_TOKEN`, `BACKUP_DIR`.
+   (`docker compose run --rm api python -m app.cli vapid-keys`), `CLOUDFLARE_TUNNEL_TOKEN`, `BACKUP_DIR`.
 4. `docker compose up -d --build`, then `docker compose exec api python -m app.cli bootstrap-admin "Your name"` and open the link on your phone.
 5. Updates: `git pull && docker compose up -d --build` (migrations run automatically on start).
 
@@ -128,5 +184,6 @@ Postgres listens only on `127.0.0.1:5432` (for `ops/backup.sh` on the host); the
 - [ ] Install the prerequisites above (including `ffmpeg`) on every machine that runs the app.
 - [ ] Run `bootstrap-admin` once and register your passkey (Windows Hello / phone).
 - [ ] Backups (#35): mount the USB drive, set `BACKUP_DIR`, add the cron line, do one test restore (see Backups).
-- [ ] Production (#36–#37): buy the `.si` domain, move its nameservers to Cloudflare, create a Cloudflare Tunnel token, install Ubuntu Server + Docker on the ProDesk.
-- [ ] In production `.env`: `RP_ID=<domain>`, `ORIGIN=https://<domain>`, `COOKIE_SECURE=1`, then register passkeys again on the real domain.
+- [ ] Deploy (#36): buy the `.si` domain, move its nameservers to Cloudflare, create the tunnel token, install Ubuntu Server + Docker on the ProDesk, first `docker compose up`.
+- [ ] Go-live (#37): production `.env` (`RP_ID`, `ORIGIN`, `COOKIE_SECURE=1`, new VAPID keys), register passkeys on the real domain,
+      turn on notifications on both phones (iPhone: Share → Add to Home Screen first), check video playback, do the restore drill.
