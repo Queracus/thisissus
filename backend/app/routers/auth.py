@@ -1,0 +1,72 @@
+import asyncpg
+from fastapi import APIRouter, Depends, Request, Response
+from pydantic import BaseModel
+
+from app.auth.deps import current_user
+from app.auth.passkeys import authenticate, authentication_options, register_passkey, registration_options
+from app.auth.sessions import COOKIE, create_session, delete_session, set_session_cookie
+from app.auth.tokens import use_token, valid_token
+from app.db import get_conn
+
+router = APIRouter(prefix="/auth")
+
+
+class TokenIn(BaseModel):
+    token: str
+
+
+class RegisterIn(BaseModel):
+    token: str
+    credential: dict
+
+
+class LoginIn(BaseModel):
+    credential: dict
+
+
+def me_out(user: asyncpg.Record) -> dict:
+    return {"id": user["id"], "display_name": user["display_name"]}
+
+
+async def _login(conn: asyncpg.Connection, request: Request, response: Response, user_id: int) -> dict:
+    set_session_cookie(response, await create_session(conn, user_id, request.headers.get("user-agent")))
+    return me_out(await conn.fetchrow("SELECT * FROM users WHERE id = $1", user_id))
+
+
+@router.post("/passkey/register/options")
+async def register_options(body: TokenIn, conn: asyncpg.Connection = Depends(get_conn)):
+    tok = await valid_token(conn, body.token)
+    return await registration_options(conn, await conn.fetchrow("SELECT * FROM users WHERE id = $1", tok["user_id"]))
+
+
+@router.post("/passkey/register/verify")
+async def register_verify(body: RegisterIn, request: Request, response: Response, conn: asyncpg.Connection = Depends(get_conn)):
+    tok = await valid_token(conn, body.token)
+    async with conn.transaction():
+        await register_passkey(conn, tok["user_id"], body.credential)
+        await use_token(conn, body.token)
+        return await _login(conn, request, response, tok["user_id"])
+
+
+@router.post("/passkey/login/options")
+async def login_options(conn: asyncpg.Connection = Depends(get_conn)):
+    return await authentication_options(conn)
+
+
+@router.post("/passkey/login/verify")
+async def login_verify(body: LoginIn, request: Request, response: Response, conn: asyncpg.Connection = Depends(get_conn)):
+    async with conn.transaction():
+        return await _login(conn, request, response, await authenticate(conn, body.credential))
+
+
+@router.post("/logout")
+async def logout(request: Request, response: Response, conn: asyncpg.Connection = Depends(get_conn)):
+    if raw := request.cookies.get(COOKIE):
+        await delete_session(conn, raw)
+    response.delete_cookie(COOKIE, path="/")
+    return {"ok": True}
+
+
+@router.get("/me")
+async def me(user: asyncpg.Record = Depends(current_user)):
+    return me_out(user)

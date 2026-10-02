@@ -33,6 +33,14 @@ cd backend && .venv/Scripts/python -m uvicorn app.main:app --reload --port 8000
 cd frontend && npm run dev     # http://localhost:5173, proxies /api to :8000
 ```
 
+## First admin
+
+```bash
+cd backend && .venv/Scripts/python -m app.cli bootstrap-admin "Your name"
+```
+Open the printed `/invite/<token>` link (valid 7 days, single use) and create a passkey. Later, log in at `/login`.
+Passkeys are bound to `RP_ID`/`ORIGIN` from `.env`, so ones made on `localhost` don't work on the production domain.
+
 ## Test
 
 ```bash

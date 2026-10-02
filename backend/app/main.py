@@ -1,11 +1,13 @@
 from contextlib import asynccontextmanager
 
 import asyncpg
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
 
 from app import config
+from app.errors import ApiError, api_error_handler
 from app.migrator import migrate
-from app.routers import health
+from app.routers import auth, health
 
 
 @asynccontextmanager
@@ -18,7 +20,18 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="Thisissus", lifespan=lifespan)
+app.add_exception_handler(ApiError, api_error_handler)
+
+
+@app.middleware("http")
+async def reject_foreign_origin(request: Request, call_next):
+    """CSRF guard on top of SameSite=Lax: browsers always send Origin on mutating fetches."""
+    origin = request.headers.get("origin")
+    if request.method in ("POST", "PUT", "PATCH", "DELETE") and origin and origin != config.ORIGIN:
+        return JSONResponse({"code": "auth.bad_origin"}, status_code=403)
+    return await call_next(request)
+
 
 # Every router must be listed here, otherwise it is never mounted.
-for r in (health,):
+for r in (health, auth):
     app.include_router(r.router, prefix="/api")

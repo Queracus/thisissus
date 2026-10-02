@@ -10,6 +10,12 @@ MIGRATIONS_DIR = ROOT / "backend" / "migrations"
 DB_NAME = os.environ.get("DB_NAME", "thisissus")
 TEST_DB_NAME = os.environ.get("DB_TEST_NAME", "thisissus_test")
 
+# Passkeys are bound to RP_ID + ORIGIN: localhost in dev, the .si domain in prod.
+RP_ID = os.environ.get("RP_ID", "localhost")
+RP_NAME = "Thisissus"
+ORIGIN = os.environ.get("ORIGIN", "http://localhost:5173")
+COOKIE_SECURE = os.environ.get("COOKIE_SECURE", "0") == "1"
+
 
 def dsn(db_name: str = DB_NAME) -> str:
     e = os.environ
