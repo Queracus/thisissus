@@ -128,5 +128,15 @@
       "place_name": "Where",
       "cost": "Cost (€)"
     }
+  },
+  "reviews": {
+    "mine": "My review",
+    "again": "Again?",
+    "yes": "Yes",
+    "maybe": "Maybe",
+    "no": "No",
+    "notes": "What will you remember ...",
+    "save": "Save review",
+    "saved": "Saved ✓"
   }
 }

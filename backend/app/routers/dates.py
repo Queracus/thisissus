@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Literal
 
 import asyncpg
 from fastapi import APIRouter, Depends
@@ -10,7 +11,8 @@ from app.errors import ApiError
 from app.policy import active_space, scope_sql
 
 router = APIRouter(prefix="/dates")
-COLUMNS = "id, space_id, title, starts_at, ends_at, place_name, lat, lon, cost::float AS cost, created_by, created_at"
+COLUMNS = """id, space_id, title, starts_at, ends_at, place_name, lat, lon, cost::float AS cost, created_by, created_at,
+             (SELECT avg(r.rating)::float FROM date_reviews r WHERE r.date_id = dates.id) AS avg_rating"""
 
 
 class DateIn(BaseModel):
@@ -30,6 +32,20 @@ class DateIn(BaseModel):
         return v
 
 
+class ReviewIn(BaseModel):
+    rating: int = Field(ge=1, le=5)
+    again: Literal["yes", "maybe", "no"]
+    notes: str | None = Field(default=None, max_length=2000)
+
+
+class ReviewOut(BaseModel):
+    user_id: int
+    display_name: str
+    rating: int
+    again: str
+    notes: str | None
+
+
 class DateOut(BaseModel):
     id: int
     space_id: int
@@ -42,6 +58,8 @@ class DateOut(BaseModel):
     cost: float | None
     created_by: int | None
     created_at: datetime
+    avg_rating: float | None
+    reviews: list[ReviewOut] = []
 
 
 async def visible_date(conn: asyncpg.Connection, user_id: int, date_id: int) -> asyncpg.Record:
@@ -70,7 +88,11 @@ async def create_date(body: DateIn, space: asyncpg.Record = Depends(active_space
 
 @router.get("/{date_id}", response_model=DateOut)
 async def get_date(date_id: int, user: asyncpg.Record = Depends(current_user), conn: asyncpg.Connection = Depends(get_conn)):
-    return dict(await visible_date(conn, user["id"], date_id))
+    date = dict(await visible_date(conn, user["id"], date_id))
+    date["reviews"] = [dict(r) for r in await conn.fetch(
+        """SELECT r.user_id, u.display_name, r.rating, r.again, r.notes FROM date_reviews r JOIN users u ON u.id = r.user_id
+           WHERE r.date_id = $1 ORDER BY r.updated_at""", date_id)]
+    return date
 
 
 @router.put("/{date_id}", response_model=DateOut)
@@ -86,4 +108,15 @@ async def update_date(date_id: int, body: DateIn, user: asyncpg.Record = Depends
 async def delete_date(date_id: int, user: asyncpg.Record = Depends(current_user), conn: asyncpg.Connection = Depends(get_conn)):
     await visible_date(conn, user["id"], date_id)
     await conn.execute("UPDATE dates SET deleted_at = now() WHERE id = $1", date_id)
+    return {"ok": True}
+
+
+@router.put("/{date_id}/review")
+async def put_review(date_id: int, body: ReviewIn, user: asyncpg.Record = Depends(current_user), conn: asyncpg.Connection = Depends(get_conn)):
+    """Create or replace the caller's own review."""
+    await visible_date(conn, user["id"], date_id)
+    await conn.execute(
+        """INSERT INTO date_reviews (date_id, user_id, rating, again, notes) VALUES ($1, $2, $3, $4, $5)
+           ON CONFLICT (date_id, user_id) DO UPDATE SET rating = $3, again = $4, notes = $5, updated_at = now()""",
+        date_id, user["id"], body.rating, body.again, body.notes)
     return {"ok": True}

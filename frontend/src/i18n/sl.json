@@ -132,5 +132,15 @@
       "place_name": "Kje",
       "cost": "Strošek (€)"
     }
+  },
+  "reviews": {
+    "mine": "Moja ocena",
+    "again": "Še enkrat?",
+    "yes": "Ja",
+    "maybe": "Mogoče",
+    "no": "Ne",
+    "notes": "Kaj si boš zapomnil/a ...",
+    "save": "Shrani oceno",
+    "saved": "Shranjeno ✓"
   }
 }

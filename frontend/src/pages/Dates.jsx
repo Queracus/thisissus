@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { formatCost, formatWhen, useDates } from '../dates.js'
+import { Hearts } from '../components/Reviews.jsx'
 import { useT } from '../i18n/index.jsx'
 
 export default function Dates() {
@@ -16,7 +17,10 @@ export default function Dates() {
         {!isLoading && dates.length === 0 && <p className="py-10 text-center text-sm">{t('dates.empty')}</p>}
         {dates.map((d) => (
           <Link key={d.id} to={`/dates/${d.id}`} className="rounded-2xl bg-white p-4 shadow-sm active:scale-[0.99]">
-            <div className="font-bold">{d.title}</div>
+            <div className="flex items-center justify-between gap-2">
+              <span className="font-bold">{d.title}</span>
+              {d.avg_rating != null && <span className="text-xs"><Hearts value={d.avg_rating} /></span>}
+            </div>
             <div className="text-xs text-rose-400">{formatWhen(locale, d.starts_at, d.ends_at)}</div>
             <div className="mt-1 flex justify-between text-sm">
               <span>{d.place_name}</span>
