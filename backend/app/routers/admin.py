@@ -95,3 +95,11 @@ async def list_spaces(_=Depends(require_permission("manage_spaces")), conn: asyn
         """SELECT s.id, s.name, array_agg(u.display_name ORDER BY m.role DESC, m.joined_at) AS members
            FROM spaces s JOIN space_members m ON m.space_id = s.id JOIN users u ON u.id = m.user_id GROUP BY s.id ORDER BY s.id""")
     return [dict(r) for r in rows]
+
+
+@router.get("/jobs")
+async def list_jobs(failed: bool = False, _=Depends(require_permission("view_backups")), conn: asyncpg.Connection = Depends(get_conn)):
+    rows = await conn.fetch(
+        """SELECT id, kind, attempts, last_error, run_at, failed_at, created_at FROM jobs
+           WHERE done_at IS NULL AND (failed_at IS NOT NULL) = $1 ORDER BY id DESC LIMIT 100""", failed)
+    return [dict(r) for r in rows]

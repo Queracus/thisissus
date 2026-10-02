@@ -30,6 +30,7 @@ Our self-hosted dashboard for dates, date ideas and recipes. Spec: PRD issue #1;
 
 ```bash
 cd backend && .venv/Scripts/python -m uvicorn app.main:app --port 8000   # restart after backend changes (--reload hangs on Windows)
+cd backend && .venv/Scripts/python -m app.worker                  # background jobs (media, push, reminders)
 cd frontend && npm run dev     # http://localhost:5173, proxies /api to :8000
 ```
 
