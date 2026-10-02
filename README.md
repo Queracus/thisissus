@@ -78,8 +78,33 @@ This creates you as admin and as owner of a first space, "Midva". Open the print
 cd backend && PY -m pytest
 cd frontend && npm test
 ```
-The backend tests drop and recreate `thisissus_test`, build it with the real migrations, and roll back each test's transaction.
-Video tests are skipped automatically if `ffmpeg` isn't on the `PATH`.
+The backend tests reuse `thisissus_test` (its schema is recreated each run), build it with the real migrations, and roll back each test's transaction.
+Video tests are skipped automatically if `ffmpeg` isn't on the `PATH`; backup-script tests need `bash` (Git Bash on Windows) and `pg_dump`.
+
+## Backups
+
+`ops/backup.sh` makes a full `pg_dump` (everything, photos and videos included), verifies it, keeps the newest 2, and writes
+`backup-status.json` that the admin panel shows (last run, size, USB fill level, warnings).
+
+```bash
+BACKUP_DIR=/mnt/usb/thisissus ops/backup.sh
+```
+
+On the server (Linux), once:
+
+1. Find the USB drive's UUID: `lsblk -f`. Mount it permanently: add to `/etc/fstab`
+   `UUID=<uuid>  /mnt/usb  ext4  defaults,nofail  0  2`, then `sudo mkdir -p /mnt/usb && sudo mount -a`.
+2. Set `BACKUP_DIR=/mnt/usb/thisissus` in `.env` (the admin panel reads the status file from there too).
+3. Nightly at 03:00: `crontab -e` →
+   `0 3 * * * cd /path/to/thisissus && BACKUP_DIR=/mnt/usb/thisissus ops/backup.sh >> /var/log/thisissus-backup.log 2>&1`
+
+**Restore** (test this once before trusting it):
+
+```bash
+createdb -U thisissus thisissus_restored
+pg_restore -U thisissus -d thisissus_restored --no-owner /mnt/usb/thisissus/thisissus-<newest>.dump
+```
+Point `DB_NAME` at `thisissus_restored` (or rename the databases), start the app, and check a few dates and photos.
 
 ## Database changes
 
@@ -89,5 +114,6 @@ Add a new file to `backend/migrations/` with the next number, e.g. `013_video.sq
 
 - [ ] Install the prerequisites above (including `ffmpeg`) on every machine that runs the app.
 - [ ] Run `bootstrap-admin` once and register your passkey (Windows Hello / phone).
-- [ ] Production (issues #35–#37): buy the `.si` domain, move its nameservers to Cloudflare, create a Cloudflare Tunnel token, install Ubuntu Server + Docker on the ProDesk, plug in and mount the backup USB drive.
+- [ ] Backups (#35): mount the USB drive, set `BACKUP_DIR`, add the cron line, do one test restore (see Backups).
+- [ ] Production (#36–#37): buy the `.si` domain, move its nameservers to Cloudflare, create a Cloudflare Tunnel token, install Ubuntu Server + Docker on the ProDesk.
 - [ ] In production `.env`: `RP_ID=<domain>`, `ORIGIN=https://<domain>`, `COOKIE_SECURE=1`, then register passkeys again on the real domain.

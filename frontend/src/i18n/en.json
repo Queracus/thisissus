@@ -115,6 +115,12 @@
     "share": {
       "not_a_contact": "You can only share with people from your spaces.",
       "not_found": "This isn't shared with you (anymore)."
+    },
+    "backup": {
+      "never_ran": "No backup has run yet.",
+      "stale": "The last backup is more than a day old.",
+      "disk_almost_full": "The USB drive is almost full (80%+).",
+      "failed": "The last backup failed."
     }
   },
   "nav": {
@@ -474,5 +480,10 @@
     "running": "Exporting …",
     "last": "Last export {when}: {files} files, {written} new.",
     "failed": "Export failed: {error}"
+  },
+  "backup": {
+    "title": "Backup",
+    "lastOk": "Last backup: {when}",
+    "lastFailed": "Last backup FAILED: {when}"
   }
 }

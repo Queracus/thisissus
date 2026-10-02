@@ -117,6 +117,12 @@
     "share": {
       "not_a_contact": "Deliš lahko le z ljudmi iz svojih prostorov.",
       "not_found": "To ni (več) deljeno z vami."
+    },
+    "backup": {
+      "never_ran": "Varnostna kopija se še ni izvedla.",
+      "stale": "Zadnja kopija je starejša od enega dneva.",
+      "disk_almost_full": "USB disk je skoraj poln (80 %+).",
+      "failed": "Zadnja varnostna kopija ni uspela."
     }
   },
   "nav": {
@@ -488,5 +494,10 @@
     "running": "Izvažam …",
     "last": "Zadnji izvoz {when}: {files} datotek, {written} novih.",
     "failed": "Izvoz ni uspel: {error}"
+  },
+  "backup": {
+    "title": "Varnostna kopija",
+    "lastOk": "Zadnja kopija: {when}",
+    "lastFailed": "Zadnja kopija NI uspela: {when}"
   }
 }

@@ -8,6 +8,7 @@ load_dotenv(ROOT / ".env")
 
 MIGRATIONS_DIR = ROOT / "backend" / "migrations"
 EXPORT_DIR = os.environ.get("EXPORT_DIR", str(ROOT / "export"))  # browsable copy of all photos/videos
+BACKUP_DIR = os.environ.get("BACKUP_DIR", "")  # where ops/backup.sh writes dumps + backup-status.json (USB)
 DB_NAME = os.environ.get("DB_NAME", "thisissus")
 TEST_DB_NAME = os.environ.get("DB_TEST_NAME", "thisissus_test")
 

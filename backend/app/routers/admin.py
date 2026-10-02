@@ -1,4 +1,6 @@
-from datetime import timedelta
+import json
+from datetime import UTC, datetime, timedelta
+from pathlib import Path
 
 import asyncpg
 from fastapi import APIRouter, Depends
@@ -120,3 +122,24 @@ async def export_status(_=Depends(require_permission("view_backups")), conn: asy
     last = await conn.fetchrow("SELECT finished_at, files, written FROM export_runs ORDER BY id DESC LIMIT 1")
     failed = await conn.fetchrow("SELECT failed_at, last_error FROM jobs WHERE kind = 'media.export' AND failed_at IS NOT NULL ORDER BY id DESC LIMIT 1")
     return {"queued": queued, "dir": str(config.EXPORT_DIR), "last": dict(last) if last else None, "failed": dict(failed) if failed else None}
+
+
+STALE_AFTER = timedelta(hours=26)  # nightly backups + slack
+DISK_WARN_PCT = 80
+
+
+@router.get("/backup-status")
+async def backup_status(_=Depends(require_permission("view_backups"))):
+    """Reads the status file ops/backup.sh writes into BACKUP_DIR; adds warnings the admin panel shows."""
+    path = Path(config.BACKUP_DIR or "") / "backup-status.json"
+    if not config.BACKUP_DIR or not path.exists():
+        return {"ok": None, "warnings": ["backup.never_ran"]}
+    status = json.loads(path.read_text(encoding="utf-8"))
+    warnings = []
+    if status.get("ok") is False:
+        warnings.append("backup.failed")
+    if datetime.now(UTC) - datetime.fromisoformat(status["time"].replace("Z", "+00:00")) > STALE_AFTER:
+        warnings.append("backup.stale")
+    if (status.get("disk_used_pct") or 0) >= DISK_WARN_PCT:
+        warnings.append("backup.disk_almost_full")
+    return {**status, "warnings": warnings}

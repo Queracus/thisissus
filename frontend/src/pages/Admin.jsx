@@ -4,6 +4,7 @@ import { Link, Navigate } from 'react-router-dom'
 import { api } from '../api.js'
 import { useMe } from '../auth.js'
 import { Button, Input } from '../components/Screen.jsx'
+import BackupCard from '../components/BackupCard.jsx'
 import ExportCard from '../components/ExportCard.jsx'
 import { useT } from '../i18n/index.jsx'
 
@@ -137,6 +138,7 @@ export default function Admin() {
           {users.data?.map((u) => <UserRow key={u.id} user={u} roleNames={roles.data?.map((r) => r.name) ?? []} />)}
         </ul>
         <SpacesAdmin users={users.data} />
+        <BackupCard />
         <ExportCard />
       </div>
     </main>
