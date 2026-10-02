@@ -480,5 +480,13 @@
       "few": "pred {count} leti",
       "other": "pred {count} leti"
     }
+  },
+  "export": {
+    "title": "Izvoz fotk",
+    "info": "Vse originalne fotke in videi kot navadne datoteke v mapi {dir}.",
+    "start": "Izvozi fotke",
+    "running": "Izvažam …",
+    "last": "Zadnji izvoz {when}: {files} datotek, {written} novih.",
+    "failed": "Izvoz ni uspel: {error}"
   }
 }

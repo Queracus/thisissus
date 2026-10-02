@@ -466,5 +466,13 @@
       "one": "{count} year ago",
       "other": "{count} years ago"
     }
+  },
+  "export": {
+    "title": "Photo export",
+    "info": "All original photos and videos as plain files in {dir}.",
+    "start": "Export photos",
+    "running": "Exporting …",
+    "last": "Last export {when}: {files} files, {written} new.",
+    "failed": "Export failed: {error}"
   }
 }

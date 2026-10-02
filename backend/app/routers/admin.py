@@ -10,6 +10,7 @@ from app.auth.roles import require_permission
 from app.auth.tokens import invite_new_user, issue_token
 from app.db import get_conn
 from app.errors import ApiError
+from app.jobs import enqueue
 
 router = APIRouter(prefix="/admin")
 
@@ -103,3 +104,19 @@ async def list_jobs(failed: bool = False, _=Depends(require_permission("view_bac
         """SELECT id, kind, attempts, last_error, run_at, failed_at, created_at FROM jobs
            WHERE done_at IS NULL AND (failed_at IS NOT NULL) = $1 ORDER BY id DESC LIMIT 100""", failed)
     return [dict(r) for r in rows]
+
+
+@router.post("/export")
+async def start_export(_=Depends(require_permission("view_backups")), conn: asyncpg.Connection = Depends(get_conn)):
+    """Queue a media export (one at a time)."""
+    if not await conn.fetchval("SELECT 1 FROM jobs WHERE kind = 'media.export' AND done_at IS NULL AND failed_at IS NULL"):
+        await enqueue(conn, "media.export", {})
+    return {"ok": True}
+
+
+@router.get("/export")
+async def export_status(_=Depends(require_permission("view_backups")), conn: asyncpg.Connection = Depends(get_conn)):
+    queued = await conn.fetchval("SELECT EXISTS (SELECT 1 FROM jobs WHERE kind = 'media.export' AND done_at IS NULL AND failed_at IS NULL)")
+    last = await conn.fetchrow("SELECT finished_at, files, written FROM export_runs ORDER BY id DESC LIMIT 1")
+    failed = await conn.fetchrow("SELECT failed_at, last_error FROM jobs WHERE kind = 'media.export' AND failed_at IS NOT NULL ORDER BY id DESC LIMIT 1")
+    return {"queued": queued, "dir": str(config.EXPORT_DIR), "last": dict(last) if last else None, "failed": dict(failed) if failed else None}

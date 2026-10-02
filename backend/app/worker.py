@@ -12,6 +12,7 @@ from app import config
 from app.db import init_conn
 from app.jobs import Handler, run_once, schedule_periodic
 from app.media.derive import derive_media
+from app.export import export_all
 from app.migrator import migrate
 from app.push import send as push_send
 from app.reminders import tick as reminders_tick
@@ -23,6 +24,7 @@ HANDLERS: dict[str, Handler] = {
     "trash.purge": purge_expired,
     "push.send": push_send,
     "reminders.tick": reminders_tick,
+    "media.export": export_all,
 }
 PERIODIC: dict[str, int] = {
     "trash.purge": 24 * 3600,
