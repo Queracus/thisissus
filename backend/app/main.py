@@ -6,14 +6,15 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
 from app import config
+from app.db import init_conn
 from app.errors import ApiError, api_error_handler, validation_error_handler
 from app.migrator import migrate
-from app.routers import admin, auth, dates, health, me, spaces
+from app.routers import admin, auth, dates, health, me, spaces, tags
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    app.state.pool = await asyncpg.create_pool(config.dsn())
+    app.state.pool = await asyncpg.create_pool(config.dsn(), init=init_conn)
     async with app.state.pool.acquire() as conn:
         await migrate(conn, config.MIGRATIONS_DIR)
     yield
@@ -35,5 +36,5 @@ async def reject_foreign_origin(request: Request, call_next):
 
 
 # Every router must be listed here, otherwise it is never mounted.
-for r in (health, auth, me, admin, spaces, dates):
+for r in (health, auth, me, admin, spaces, dates, tags):
     app.include_router(r.router, prefix="/api")

@@ -3,7 +3,7 @@ import pytest
 from httpx import ASGITransport, AsyncClient
 
 from app import config
-from app.db import get_conn
+from app.db import get_conn, init_conn
 from app.main import app
 from app.migrator import migrate
 
@@ -16,6 +16,7 @@ async def test_db():
     await admin.execute(f'CREATE DATABASE "{config.TEST_DB_NAME}"')
     await admin.close()
     conn = await asyncpg.connect(config.dsn(config.TEST_DB_NAME))
+    await init_conn(conn)
     await migrate(conn, config.MIGRATIONS_DIR)
     yield conn
     await conn.close()

@@ -3,6 +3,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { useNavigate, useParams } from 'react-router-dom'
 import { api } from '../api.js'
 import { Button } from '../components/Screen.jsx'
+import { TagPicker } from '../components/Tags.jsx'
 import { fromLocalInput, toLocalInput, useDate } from '../dates.js'
 import { useT } from '../i18n/index.jsx'
 
@@ -19,6 +20,7 @@ function Form({ initial }) {
     place_name: initial?.place_name ?? '',
     cost: initial?.cost ?? '',
   })
+  const [tagIds, setTagIds] = useState(initial?.tags.map((tag) => tag.id) ?? [])
   const [multiDay, setMultiDay] = useState(!!initial?.ends_at)
   const [error, setError] = useState(null)
   const set = (k) => (e) => setV({ ...v, [k]: e.target.value })
@@ -34,6 +36,7 @@ function Form({ initial }) {
       cost: v.cost === '' ? null : Number(v.cost),
       lat: initial?.lat ?? null,
       lon: initial?.lon ?? null,
+      tag_ids: tagIds,
     }
     try {
       const saved = await api(initial ? `/dates/${initial.id}` : '/dates', { method: initial ? 'PUT' : 'POST', body: JSON.stringify(body) })
@@ -54,6 +57,7 @@ function Form({ initial }) {
       {multiDay && <label className="text-sm">{t('dates.field.ends_at')}<input required type="datetime-local" className={field} value={v.ends_at} onChange={set('ends_at')} /></label>}
       <label className="text-sm">{t('dates.field.place_name')}<input className={field} value={v.place_name} onChange={set('place_name')} /></label>
       <label className="text-sm">{t('dates.field.cost')}<input type="number" min="0" step="0.01" inputMode="decimal" className={field} value={v.cost} onChange={set('cost')} /></label>
+      <div className="text-sm">{t('tags.title')}<TagPicker value={tagIds} onChange={setTagIds} /></div>
       <Button type="submit">{t('dates.save')}</Button>
       {error && <p className="text-sm text-red-600">{error}</p>}
     </form>

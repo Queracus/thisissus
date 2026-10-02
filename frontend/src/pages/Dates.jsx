@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { formatCost, formatWhen, useDates } from '../dates.js'
 import { Hearts } from '../components/Reviews.jsx'
+import { TagChips } from '../components/Tags.jsx'
 import { useT } from '../i18n/index.jsx'
 
 export default function Dates() {
@@ -26,6 +27,7 @@ export default function Dates() {
               <span>{d.place_name}</span>
               <span>{formatCost(locale, d.cost)}</span>
             </div>
+            {d.tags.length > 0 && <div className="mt-2"><TagChips tags={d.tags} /></div>}
           </Link>
         ))}
       </div>

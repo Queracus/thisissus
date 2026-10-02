@@ -82,6 +82,9 @@
     },
     "date": {
       "not_found": "Zmenek ne obstaja."
+    },
+    "tag": {
+      "invalid": "Neveljavna oznaka."
     }
   },
   "nav": {
@@ -142,5 +145,20 @@
     "notes": "Kaj si boš zapomnil/a ...",
     "save": "Shrani oceno",
     "saved": "Shranjeno ✓"
+  },
+  "tags": {
+    "title": "Oznake",
+    "newPlaceholder": "Nova oznaka + Enter",
+    "starter": {
+      "food": "hrana",
+      "outdoors": "narava",
+      "movie": "film",
+      "cheap": "poceni",
+      "romantic": "romantično",
+      "culture": "kultura",
+      "sport": "šport",
+      "home": "doma",
+      "trip": "izlet"
+    }
   }
 }

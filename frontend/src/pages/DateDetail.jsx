@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import { api } from '../api.js'
 import { formatCost, formatWhen, useDate } from '../dates.js'
 import Reviews, { Hearts } from '../components/Reviews.jsx'
+import { TagChips } from '../components/Tags.jsx'
 import { useT } from '../i18n/index.jsx'
 
 export default function DateDetail() {
@@ -27,6 +28,7 @@ export default function DateDetail() {
           <Link to="/dates" className="text-sm text-rose-500 underline">← {t('dates.title')}</Link>
           <h1 className="font-display text-3xl italic text-rose-600">{d.title}</h1>
           <p className="text-sm text-rose-400">{formatWhen(locale, d.starts_at, d.ends_at)}</p>
+          <TagChips tags={d.tags} />
           {d.place_name && <p>📍 {d.place_name}</p>}
           {d.cost != null && <p>💶 {formatCost(locale, d.cost)}</p>}
           {d.avg_rating != null && <p><Hearts value={d.avg_rating} /> <span className="text-sm text-rose-400">{d.avg_rating.toFixed(1)}</span></p>}

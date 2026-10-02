@@ -9,10 +9,12 @@ from app.auth.deps import current_user
 from app.db import get_conn
 from app.errors import ApiError
 from app.policy import active_space, scope_sql
+from app.routers.tags import set_tags, tags_json
 
 router = APIRouter(prefix="/dates")
 COLUMNS = """id, space_id, title, starts_at, ends_at, place_name, lat, lon, cost::float AS cost, created_by, created_at,
-             (SELECT avg(r.rating)::float FROM date_reviews r WHERE r.date_id = dates.id) AS avg_rating"""
+             (SELECT avg(r.rating)::float FROM date_reviews r WHERE r.date_id = dates.id) AS avg_rating,
+             """ + tags_json("date_tags", "date_id", "dates.id") + " AS tags"
 
 
 class DateIn(BaseModel):
@@ -23,6 +25,7 @@ class DateIn(BaseModel):
     lat: float | None = Field(default=None, ge=-90, le=90)
     lon: float | None = Field(default=None, ge=-180, le=180)
     cost: float | None = Field(default=None, ge=0)
+    tag_ids: list[int] = []
 
     @field_validator("ends_at")
     @classmethod
@@ -46,6 +49,12 @@ class ReviewOut(BaseModel):
     notes: str | None
 
 
+class TagOut(BaseModel):
+    id: int
+    name: str
+    starter_key: str | None
+
+
 class DateOut(BaseModel):
     id: int
     space_id: int
@@ -59,6 +68,7 @@ class DateOut(BaseModel):
     created_by: int | None
     created_at: datetime
     avg_rating: float | None
+    tags: list[TagOut]
     reviews: list[ReviewOut] = []
 
 
@@ -80,10 +90,13 @@ async def list_dates(space: asyncpg.Record = Depends(active_space), conn: asyncp
 @router.post("", response_model=DateOut)
 async def create_date(body: DateIn, space: asyncpg.Record = Depends(active_space), user: asyncpg.Record = Depends(current_user),
                       conn: asyncpg.Connection = Depends(get_conn)):
-    return dict(await conn.fetchrow(
-        f"""INSERT INTO dates (space_id, title, starts_at, ends_at, place_name, lat, lon, cost, created_by)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING {COLUMNS}""",
-        space["id"], body.title, body.starts_at, body.ends_at, body.place_name, body.lat, body.lon, body.cost, user["id"]))
+    async with conn.transaction():
+        date_id = await conn.fetchval(
+            """INSERT INTO dates (space_id, title, starts_at, ends_at, place_name, lat, lon, cost, created_by)
+               VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id""",
+            space["id"], body.title, body.starts_at, body.ends_at, body.place_name, body.lat, body.lon, body.cost, user["id"])
+        await set_tags(conn, "date_tags", "date_id", date_id, space["id"], body.tag_ids)
+    return dict(await visible_date(conn, user["id"], date_id))
 
 
 @router.get("/{date_id}", response_model=DateOut)
@@ -97,11 +110,14 @@ async def get_date(date_id: int, user: asyncpg.Record = Depends(current_user), c
 
 @router.put("/{date_id}", response_model=DateOut)
 async def update_date(date_id: int, body: DateIn, user: asyncpg.Record = Depends(current_user), conn: asyncpg.Connection = Depends(get_conn)):
-    await visible_date(conn, user["id"], date_id)
-    return dict(await conn.fetchrow(
-        f"""UPDATE dates SET title = $2, starts_at = $3, ends_at = $4, place_name = $5, lat = $6, lon = $7, cost = $8, updated_at = now()
-            WHERE id = $1 RETURNING {COLUMNS}""",
-        date_id, body.title, body.starts_at, body.ends_at, body.place_name, body.lat, body.lon, body.cost))
+    date = await visible_date(conn, user["id"], date_id)
+    async with conn.transaction():
+        await conn.execute(
+            """UPDATE dates SET title = $2, starts_at = $3, ends_at = $4, place_name = $5, lat = $6, lon = $7, cost = $8, updated_at = now()
+               WHERE id = $1""",
+            date_id, body.title, body.starts_at, body.ends_at, body.place_name, body.lat, body.lon, body.cost)
+        await set_tags(conn, "date_tags", "date_id", date_id, date["space_id"], body.tag_ids)
+    return dict(await visible_date(conn, user["id"], date_id))
 
 
 @router.delete("/{date_id}")

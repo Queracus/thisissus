@@ -80,6 +80,9 @@
     },
     "date": {
       "not_found": "Date not found."
+    },
+    "tag": {
+      "invalid": "Invalid tag."
     }
   },
   "nav": {
@@ -138,5 +141,20 @@
     "notes": "What will you remember ...",
     "save": "Save review",
     "saved": "Saved ✓"
+  },
+  "tags": {
+    "title": "Tags",
+    "newPlaceholder": "New tag + Enter",
+    "starter": {
+      "food": "food",
+      "outdoors": "outdoors",
+      "movie": "movie",
+      "cheap": "cheap",
+      "romantic": "romantic",
+      "culture": "culture",
+      "sport": "sport",
+      "home": "at home",
+      "trip": "trip"
+    }
   }
 }
