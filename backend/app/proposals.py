@@ -3,6 +3,7 @@
     idea --propose--> pending --accept (everyone)--> scheduled
                         |  ^ counter (any participant; also from scheduled = reschedule)
                         |--refuse / cancel--> idea
+    idea|pending|scheduled --not for me--> archived --reopen--> idea
 
 The first accept narrows a multi-slot proposal to that slot; other participants then accept it or counter.
 """
@@ -64,6 +65,16 @@ class Cancel:
 
 
 @dataclass(frozen=True)
+class NotForMe:
+    actor: int
+
+
+@dataclass(frozen=True)
+class Reopen:
+    actor: int
+
+
+@dataclass(frozen=True)
 class Result:
     state: IdeaState
     event: str                                       # timeline kind: proposed | countered | accepted | scheduled | refused | cancelled
@@ -101,6 +112,14 @@ def transition(state: IdeaState, event, now: datetime) -> Result:
         _require(state.status in ("pending", "scheduled"), "proposal.invalid_state")
         new = Proposal(id=None, proposed_by=event.actor, slots=_slots(event.slots, now))
         return Result(replace(state, status="pending", proposal=new, scheduled_at=None), "countered", _closing(p, "superseded"))
+
+    if isinstance(event, NotForMe):  # pass on the idea itself (archived, not deleted)
+        _require(state.status in ("idea", "pending", "scheduled"), "proposal.invalid_state")
+        return Result(replace(state, status="archived", proposal=None, scheduled_at=None), "not_for_me", _closing(p, "cancelled"))
+
+    if isinstance(event, Reopen):
+        _require(state.status == "archived", "proposal.invalid_state")
+        return Result(replace(state, status="idea"), "reopened")
 
     _require(state.status == "pending" and p is not None, "proposal.invalid_state")
 

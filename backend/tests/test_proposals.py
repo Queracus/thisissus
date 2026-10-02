@@ -3,7 +3,7 @@ from datetime import UTC, datetime, timedelta
 
 import pytest
 
-from app.proposals import Accept, Cancel, Counter, IdeaState, Propose, Proposal, Refuse, TransitionError, transition
+from app.proposals import Accept, Cancel, Counter, IdeaState, NotForMe, Propose, Proposal, Refuse, Reopen, TransitionError, transition
 
 NOW = datetime(2026, 10, 1, 12, 0, tzinfo=UTC)
 FRI, SAT, SUN = (NOW + timedelta(days=d) for d in (3, 4, 5))
@@ -114,3 +114,17 @@ def test_group_needs_everyone_and_first_accept_narrows_the_slot():
     assert err(first.state, Accept(EVE, FRI)) == "proposal.unknown_slot"
     assert err(first.state, Accept(BOR, SAT)) == "proposal.already_answered"
     assert transition(first.state, Accept(EVE, SAT), NOW).state.status == "scheduled"
+
+
+def test_not_for_me_archives_from_any_open_state_and_closes_the_proposal():
+    r = transition(pending(), NotForMe(BOR), NOW)
+
+    assert (r.state.status, r.state.proposal, r.closed, r.event) == ("archived", None, ((7, "cancelled"),), "not_for_me")
+    assert transition(idea(), NotForMe(ANA), NOW).state.status == "archived"
+
+
+def test_archived_idea_can_be_reopened():
+    archived = IdeaState(status="archived", participants=COUPLE)
+
+    assert transition(archived, Reopen(BOR), NOW).state.status == "idea"
+    assert err(idea(), Reopen(BOR)) == "proposal.invalid_state"

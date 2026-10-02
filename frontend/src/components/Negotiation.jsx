@@ -82,7 +82,7 @@ export default function Negotiation({ idea }) {
     <section className="flex flex-col gap-3 rounded-2xl bg-white p-4 shadow-sm">
       {mode === 'slots' ? (
         <SlotsEditor submitLabel={t(`proposals.${slotsAction}`)} onCancel={() => setMode(null)} onSubmit={(slots) => act(slotsAction, { slots })} />
-      ) : idea.status === 'idea' ? (
+      ) : idea.status === 'archived' ? null : idea.status === 'idea' ? (
         <Button onClick={() => setMode('slots')}>📅 {t('proposals.propose')}</Button>
       ) : idea.status === 'scheduled' ? (
         <>
@@ -105,12 +105,16 @@ export default function Negotiation({ idea }) {
       ) : p ? (
         <>
           <p>{t('proposals.waiting')}: {p.slots.map((s) => formatWhen(locale, s)).join(' · ')}</p>
+          {p.pending_names.length > 0 && <p className="text-sm text-rose-400">{t('proposals.waitingFor', { names: p.pending_names.join(', ') })}</p>}
           <div className="flex gap-3 text-sm">
             <button onClick={() => setMode('slots')} className="underline">{t('proposals.change')}</button>
             {mine && <button onClick={() => act('cancel')} className="text-red-600 underline">{t('proposals.cancel')}</button>}
           </div>
         </>
       ) : null}
+      {idea.status === 'archived'
+        ? <button onClick={() => act('reopen')} className="self-start text-sm font-bold text-rose-600 underline">{t('proposals.reopen')}</button>
+        : <button onClick={() => confirm(t('proposals.confirmNotForMe')) && act('not-for-me')} className="self-start text-xs text-rose-400 underline">{t('proposals.notForMe')}</button>}
       {error && <p className="text-sm text-red-600">{error}</p>}
       {data?.events.length > 0 && <Timeline events={data.events} />}
       <form className="flex gap-2" onSubmit={(e) => { e.preventDefault(); if (comment.trim()) act('comments', { text: comment }).then(() => setComment('')) }}>

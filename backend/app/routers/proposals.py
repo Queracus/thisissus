@@ -8,8 +8,8 @@ from pydantic import AwareDatetime, BaseModel, Field
 from app.auth.deps import current_user
 from app.db import get_conn
 from app.errors import ApiError
-from app.proposals import Accept, Cancel, Counter, IdeaState, Propose, Proposal, Refuse, Result, TransitionError, transition
-from app.routers.ideas import visible_idea
+from app.proposals import Accept, Cancel, Counter, IdeaState, NotForMe, Propose, Proposal, Refuse, Reopen, Result, TransitionError, transition
+from app.routers.ideas import participants, visible_idea
 
 router = APIRouter(prefix="/ideas")
 
@@ -24,12 +24,6 @@ class SlotIn(BaseModel):
 
 class CommentIn(BaseModel):
     text: str = Field(min_length=1, max_length=1000)
-
-
-async def participants(conn: asyncpg.Connection, idea_id: int) -> frozenset[int]:
-    """Everyone in the idea's space (explicit invitees arrive in #20)."""
-    rows = await conn.fetch("SELECT m.user_id FROM ideas i JOIN space_members m ON m.space_id = i.space_id WHERE i.id = $1", idea_id)
-    return frozenset(r["user_id"] for r in rows)
 
 
 async def live_proposal(conn: asyncpg.Connection, idea_id: int) -> Proposal | None:
@@ -114,6 +108,16 @@ async def cancel(idea_id: int, user=Depends(current_user), conn: asyncpg.Connect
     return await run(conn, user, idea_id, Cancel, {})
 
 
+@router.post("/{idea_id}/not-for-me")
+async def not_for_me(idea_id: int, user=Depends(current_user), conn: asyncpg.Connection = Depends(get_conn)):
+    return await run(conn, user, idea_id, NotForMe, {})
+
+
+@router.post("/{idea_id}/reopen")
+async def reopen(idea_id: int, user=Depends(current_user), conn: asyncpg.Connection = Depends(get_conn)):
+    return await run(conn, user, idea_id, Reopen, {})
+
+
 @router.post("/{idea_id}/comments")
 async def comment(idea_id: int, body: CommentIn, user=Depends(current_user), conn: asyncpg.Connection = Depends(get_conn)):
     await visible_idea(conn, user["id"], idea_id)
@@ -132,6 +136,9 @@ async def timeline(idea_id: int, user=Depends(current_user), conn: asyncpg.Conne
                     "proposed_by_name": await conn.fetchval("SELECT display_name FROM users WHERE id = $1", p.proposed_by),
                     "accepted": sorted(p.accepted),
                     "pending": sorted(everyone - {p.proposed_by} - p.accepted) if p.status == "open" else [],
+                    "pending_names": [r["display_name"] for r in await conn.fetch(
+                        "SELECT display_name FROM users WHERE id = ANY($1::bigint[]) ORDER BY display_name",
+                        sorted(everyone - {p.proposed_by} - p.accepted) if p.status == "open" else [])],
                     "awaiting_me": p.status == "open" and user["id"] != p.proposed_by and user["id"] not in p.accepted}
     events = await conn.fetch(
         """SELECT e.id, e.kind, e.payload, e.created_at, e.actor_id, u.display_name AS actor_name

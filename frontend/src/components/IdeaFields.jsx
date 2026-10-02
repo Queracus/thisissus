@@ -1,19 +1,20 @@
 import { SEASONS, SEASON_EMOJI } from '../ideas.js'
 import { useT } from '../i18n/index.jsx'
+import InviteePicker from './InviteePicker.jsx'
 import { TagPicker } from './Tags.jsx'
 
 const field = 'w-full rounded-xl border border-rose-200 bg-white px-4 py-3 text-left outline-rose-400'
 
-export const emptyIdea = { title: '', description: '', url: '', est_cost: '', season: null, tag_ids: [] }
+export const emptyIdea = { title: '', description: '', url: '', est_cost: '', season: null, tag_ids: [], invitee_ids: null }
 
 export const ideaToForm = (idea) => ({
   title: idea.title, description: idea.description ?? '', url: idea.url ?? '', est_cost: idea.est_cost ?? '',
-  season: idea.season, tag_ids: idea.tags.map((t) => t.id),
+  season: idea.season, tag_ids: idea.tags.map((t) => t.id), invitee_ids: idea.invitee_ids ?? null,
 })
 
 export const formToBody = (v) => ({
   title: v.title, description: v.description || null, url: v.url || null,
-  est_cost: v.est_cost === '' ? null : Number(v.est_cost), season: v.season, tag_ids: v.tag_ids,
+  est_cost: v.est_cost === '' ? null : Number(v.est_cost), season: v.season, tag_ids: v.tag_ids, invitee_ids: v.invitee_ids,
 })
 
 // Details shared by the new-idea flow and the edit page.
@@ -37,6 +38,7 @@ export default function IdeaFields({ value, onChange, withTitle = true }) {
           </button>
         ))}
       </div>
+      <InviteePicker value={value.invitee_ids} onChange={onChange} />
       <div>{t('tags.title')}<TagPicker value={value.tag_ids} onChange={(fn) => onChange((cur) => ({ ...cur, tag_ids: typeof fn === 'function' ? fn(cur.tag_ids) : fn }))} /></div>
     </div>
   )

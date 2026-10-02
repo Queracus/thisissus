@@ -95,7 +95,8 @@
       "not_found": "Tega ni v košu."
     },
     "idea": {
-      "not_found": "Ideja ne obstaja."
+      "not_found": "Ideja ne obstaja.",
+      "invalid_invitee": "Povabiš lahko le člane prostora."
     },
     "proposal": {
       "own_proposal": "Svojega predloga ne moreš sprejeti.",
@@ -263,7 +264,10 @@
       "url": "Povezava",
       "est_cost": "Približni strošek (€)",
       "season": "Najboljši čas"
-    }
+    },
+    "archiveTitle": "Arhiv idej",
+    "showArchive": "Arhiv",
+    "showOpen": "Odprte ideje"
   },
   "proposals": {
     "propose": "Predlagaj termin",
@@ -285,7 +289,18 @@
       "scheduled": "je potrdil/a 💕",
       "refused": "pravi, da termin ne ustreza",
       "cancelled": "je preklical/a predlog",
-      "comment": ""
-    }
+      "comment": "",
+      "not_for_me": "pravi, da ni zanj/zanjo",
+      "reopened": "je ponovno odprl/a idejo"
+    },
+    "waitingFor": "Še ni odgovoril/a: {names}",
+    "notForMe": "Ni zame",
+    "reopen": "Odpri znova",
+    "confirmNotForMe": "Ta ideja ni zate? Gre v arhiv (lahko jo odpreš znova)."
+  },
+  "invitees": {
+    "title": "Kdo gre zraven",
+    "everyone": "vsi v prostoru",
+    "some": "samo izbrani"
   }
 }

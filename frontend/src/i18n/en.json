@@ -93,7 +93,8 @@
       "not_found": "Not in the trash."
     },
     "idea": {
-      "not_found": "Idea not found."
+      "not_found": "Idea not found.",
+      "invalid_invitee": "You can only invite members of the space."
     },
     "proposal": {
       "own_proposal": "You can't accept your own proposal.",
@@ -257,7 +258,10 @@
       "url": "Link",
       "est_cost": "Estimated cost (€)",
       "season": "Best time"
-    }
+    },
+    "archiveTitle": "Idea archive",
+    "showArchive": "Archive",
+    "showOpen": "Open ideas"
   },
   "proposals": {
     "propose": "Propose a time",
@@ -279,7 +283,18 @@
       "scheduled": "confirmed 💕",
       "refused": "says the time doesn't work",
       "cancelled": "cancelled the proposal",
-      "comment": ""
-    }
+      "comment": "",
+      "not_for_me": "says it's not for them",
+      "reopened": "reopened the idea"
+    },
+    "waitingFor": "Still waiting for: {names}",
+    "notForMe": "Not for me",
+    "reopen": "Reopen",
+    "confirmNotForMe": "Not for you? It goes to the archive (you can reopen it)."
+  },
+  "invitees": {
+    "title": "Who's coming",
+    "everyone": "everyone in the space",
+    "some": "only the selected"
   }
 }
