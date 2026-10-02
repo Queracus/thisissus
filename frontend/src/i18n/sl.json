@@ -185,5 +185,16 @@
     "pin": "Lokacija (tapni zemljevid)",
     "useSuggestion": "Uporabi lokacijo iz fotk",
     "clear": "Odstrani pin"
+  },
+  "filters": {
+    "title": "Filtri",
+    "search": "Išči ...",
+    "minRating": "Vsaj",
+    "bothYes": "Oba bi šla še enkrat",
+    "maxCost": "Največ €",
+    "from": "Od",
+    "to": "Do",
+    "clear": "Počisti filtre",
+    "noMatch": "Noben zmenek ne ustreza filtrom."
   }
 }

@@ -18,9 +18,15 @@ export function formatWhen(locale, startsAt, endsAt) {
 export const formatCost = (locale, cost) =>
   cost == null ? null : new Intl.NumberFormat(locale, { style: 'currency', currency: 'EUR' }).format(cost)
 
-export function useDates() {
+export function useDates(params = '') {
   const { active } = useSpaces()
-  return useQuery({ queryKey: ['dates', active?.id], queryFn: () => api('/dates'), enabled: !!active })
+  const qs = String(params)
+  return useQuery({
+    queryKey: ['dates', active?.id, qs],
+    queryFn: () => api(`/dates${qs ? `?${qs}` : ''}`),
+    enabled: !!active,
+    placeholderData: (prev) => prev,  // keep the list while a new filter loads
+  })
 }
 
 export const useDate = (id) =>

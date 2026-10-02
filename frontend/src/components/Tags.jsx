@@ -24,7 +24,7 @@ export function TagChips({ tags }) {
 }
 
 // Toggle existing tags; typing a new name + Enter creates it (or reuses one with the same name).
-export function TagPicker({ value, onChange }) {
+export function TagPicker({ value, onChange, allowCreate = true }) {
   const { t } = useT()
   const label = useTagLabel()
   const qc = useQueryClient()
@@ -52,8 +52,10 @@ export function TagPicker({ value, onChange }) {
           </button>
         ))}
       </div>
-      <input value={draft} onChange={(e) => setDraft(e.target.value)} onKeyDown={create} placeholder={t('tags.newPlaceholder')}
-        className="rounded-xl border border-rose-200 bg-white px-4 py-2 text-sm outline-rose-400" />
+      {allowCreate && (
+        <input value={draft} onChange={(e) => setDraft(e.target.value)} onKeyDown={create} placeholder={t('tags.newPlaceholder')}
+          className="rounded-xl border border-rose-200 bg-white px-4 py-2 text-sm outline-rose-400" />
+      )}
     </div>
   )
 }

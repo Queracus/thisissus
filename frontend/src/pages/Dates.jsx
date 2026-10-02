@@ -1,4 +1,5 @@
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
+import DateFilters from '../components/DateFilters.jsx'
 import { formatCost, formatWhen, useDates } from '../dates.js'
 import { Hearts } from '../components/Reviews.jsx'
 import { TagChips } from '../components/Tags.jsx'
@@ -6,7 +7,8 @@ import { useT } from '../i18n/index.jsx'
 
 export default function Dates() {
   const { t, locale } = useT()
-  const { data: dates = [], isLoading } = useDates()
+  const [params, setParams] = useSearchParams()
+  const { data: dates = [], isLoading } = useDates(params)
 
   return (
     <main className="min-h-[85vh] bg-rose-50 p-4 font-sans text-rose-900">
@@ -15,7 +17,8 @@ export default function Dates() {
           <h1 className="font-display text-3xl italic text-rose-600">{t('dates.title')}</h1>
           <span className="text-sm text-rose-400">{t('dates.count', { count: dates.length })}</span>
         </div>
-        {!isLoading && dates.length === 0 && <p className="py-10 text-center text-sm">{t('dates.empty')}</p>}
+        <DateFilters params={params} setParams={setParams} />
+        {!isLoading && dates.length === 0 && <p className="py-10 text-center text-sm">{t(params.size ? 'filters.noMatch' : 'dates.empty')}</p>}
         {dates.map((d) => (
           <Link key={d.id} to={`/dates/${d.id}`} className="rounded-2xl bg-white p-4 shadow-sm active:scale-[0.99]">
             <div className="flex items-center justify-between gap-2">

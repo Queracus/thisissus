@@ -181,5 +181,16 @@
     "pin": "Location (tap the map)",
     "useSuggestion": "Use location from photos",
     "clear": "Remove pin"
+  },
+  "filters": {
+    "title": "Filters",
+    "search": "Search ...",
+    "minRating": "At least",
+    "bothYes": "Both would go again",
+    "maxCost": "Max €",
+    "from": "From",
+    "to": "To",
+    "clear": "Clear filters",
+    "noMatch": "No dates match these filters."
   }
 }

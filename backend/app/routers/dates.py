@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Literal
 
 import asyncpg
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from pydantic import AwareDatetime, BaseModel, Field, ValidationInfo, field_validator
 
 from app.auth.deps import current_user
@@ -94,8 +94,36 @@ async def visible_date(conn: asyncpg.Connection, user_id: int, date_id: int) -> 
 
 
 @router.get("", response_model=list[DateOut])
-async def list_dates(space: asyncpg.Record = Depends(active_space), conn: asyncpg.Connection = Depends(get_conn)):
-    rows = await conn.fetch(f"SELECT {COLUMNS} FROM dates WHERE space_id = $1 AND deleted_at IS NULL ORDER BY starts_at DESC, id DESC", space["id"])
+async def list_dates(space: asyncpg.Record = Depends(active_space), conn: asyncpg.Connection = Depends(get_conn),
+                     tag: list[int] = Query(default=[]), min_rating: float | None = None, both_yes: bool = False,
+                     max_cost: float | None = None, from_: AwareDatetime | None = Query(default=None, alias="from"),
+                     to: AwareDatetime | None = None, q: str | None = Query(default=None, max_length=100)):
+    """Newest first. All filters combine with AND; several `tag`s mean the date must have all of them."""
+    params: list = [space["id"]]
+    where = ["space_id = $1", "deleted_at IS NULL"]
+
+    def add(sql: str, value) -> None:
+        params.append(value)
+        where.append(sql.replace("$?", f"${len(params)}"))
+
+    if tag:
+        add("(SELECT count(DISTINCT tag_id) FROM date_tags WHERE date_id = dates.id AND tag_id = ANY($?::bigint[])) = cardinality($?::bigint[])", tag)
+    if min_rating is not None:
+        add("(SELECT avg(rating) FROM date_reviews WHERE date_id = dates.id) >= $?", min_rating)
+    if both_yes:  # every member of the space said "again: yes"
+        where.append("""(SELECT count(*) FROM date_reviews r WHERE r.date_id = dates.id AND r.again = 'yes')
+                        = (SELECT count(*) FROM space_members m WHERE m.space_id = dates.space_id)""")
+    if max_cost is not None:
+        add("coalesce(cost, 0) <= $?", max_cost)
+    if from_:
+        add("starts_at >= $?", from_)
+    if to:
+        add("starts_at <= $?", to)
+    if q:
+        add("""(title ILIKE $? OR place_name ILIKE $?
+                OR EXISTS (SELECT 1 FROM date_reviews r WHERE r.date_id = dates.id AND r.notes ILIKE $?))""",
+            f"%{q.replace('%', r'\%').replace('_', r'\_')}%")
+    rows = await conn.fetch(f"SELECT {COLUMNS} FROM dates WHERE {' AND '.join(where)} ORDER BY starts_at DESC, id DESC", *params)
     return [dict(r) for r in rows]
 
 
