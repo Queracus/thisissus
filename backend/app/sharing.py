@@ -29,6 +29,28 @@ async def user_grant(conn: asyncpg.Connection, user_id: int, entity_type: str, e
     return await conn.fetchrow(_grants("s.target_user_id = $1"), user_id, entity_type, entity_id, space_id)
 
 
+async def link_share(conn: asyncpg.Connection, token: str) -> asyncpg.Record | None:
+    """The live share behind a secret link (only the token's sha256 is stored)."""
+    from app.auth.tokens import hash_token
+    return await conn.fetchrow(f"SELECT s.*, sp.name AS space_name FROM shares s JOIN spaces sp ON sp.id = s.space_id "
+                               f"WHERE s.token_hash = $1 AND {LIVE}", hash_token(token))
+
+
+async def link_covers(conn: asyncpg.Connection, share: asyncpg.Record, entity_type: str, entity_id: int) -> bool:
+    if share["entity_type"] != entity_type:
+        return False
+    if share["scope"] == "item":
+        return share["entity_id"] == entity_id and await entity_space(conn, entity_type, entity_id) is not None
+    return await entity_space(conn, entity_type, entity_id) == share["space_id"]
+
+
+async def link_can_see_media(conn: asyncpg.Connection, share: asyncpg.Record, media_id: int) -> bool:
+    for entity_type, entity_id in await media_owners(conn, media_id):
+        if await link_covers(conn, share, entity_type, entity_id):
+            return True
+    return False
+
+
 async def media_owners(conn: asyncpg.Connection, media_id: int) -> list[tuple[str, int]]:
     rows = await conn.fetch("""SELECT 'date' AS t, date_id AS id FROM date_media WHERE media_id = $1
                                UNION ALL SELECT 'recipe', recipe_id FROM recipe_media WHERE media_id = $1""", media_id)

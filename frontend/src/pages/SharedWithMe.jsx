@@ -31,20 +31,20 @@ export default function SharedWithMe() {
 }
 
 // Read-only gallery: thumbnails open the display version (shares never get originals).
-export function ReadOnlyPhotos({ photos }) {
+export function ReadOnlyPhotos({ photos, mediaFor = mediaUrl }) {
   if (!photos?.length) return null
   return (
     <div className="grid grid-cols-3 gap-1">
       {photos.filter((p) => p.status === 'ready').map((p) => (
-        <a key={p.id} href={mediaUrl(p.id, p.kind === 'video' ? 'mp4' : 'display')} target="_blank" rel="noreferrer" className="aspect-square overflow-hidden rounded-lg bg-rose-100">
-          <img src={mediaUrl(p.id, 'thumb')} alt={p.caption ?? ''} loading="lazy" className="h-full w-full object-cover" />
+        <a key={p.id} href={mediaFor(p.id, p.kind === 'video' ? 'mp4' : 'display')} target="_blank" rel="noreferrer" className="aspect-square overflow-hidden rounded-lg bg-rose-100">
+          <img src={mediaFor(p.id, 'thumb')} alt={p.caption ?? ''} loading="lazy" className="h-full w-full object-cover" />
         </a>
       ))}
     </div>
   )
 }
 
-export function SharedBody({ item }) {
+export function SharedBody({ item, mediaFor }) {
   const { t, locale } = useT()
   return (
     <article className="mx-auto flex max-w-md flex-col gap-3">
@@ -57,7 +57,7 @@ export function SharedBody({ item }) {
       {item.avg_rating != null && <Hearts value={item.avg_rating} />}
       {item.description && <p className="whitespace-pre-line">{item.description}</p>}
       {item.est_cost != null && <p>💶 ~{formatCost(locale, item.est_cost)}</p>}
-      <ReadOnlyPhotos photos={item.photos} />
+      <ReadOnlyPhotos photos={item.photos} mediaFor={mediaFor} />
       {item.ingredients?.length > 0 && (
         <section className="rounded-2xl bg-white p-4 shadow-sm">
           <h2 className="mb-2 font-bold">{t('recipes.ingredients')} · {t('recipes.portions', { count: item.portions })}</h2>

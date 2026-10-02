@@ -41,6 +41,16 @@ async def get_media(media_id: int, variant: str, request: Request, user: asyncpg
         row = await conn.fetchrow(sql, media_id, variant)  # shared viewer: derivatives only, never the original (EXIF/GPS)
     if not row:
         raise ApiError(404, "media.not_found")
+    return await respond(conn, request, row)
+
+
+DERIVATIVE_SQL = """SELECT m.id, m.mime, m.size, encode(m.sha256, 'hex') AS etag FROM media o
+                    JOIN media m ON m.parent_id = o.id AND m.variant = $2 AND m.status = 'ready'
+                    WHERE o.id = $1 AND o.variant = 'original' AND o.deleted_at IS NULL"""
+
+
+async def respond(conn: asyncpg.Connection, request: Request, row: asyncpg.Record) -> Response:
+    """Stream a stored media row: ETag/304 and HTTP Range (206) support."""
     headers = {"Accept-Ranges": "bytes", "Cache-Control": CACHE, "ETag": f'"{row["etag"]}"'}
     if request.headers.get("if-none-match") == headers["ETag"]:
         return Response(status_code=304, headers=headers)

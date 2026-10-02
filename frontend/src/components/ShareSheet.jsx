@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { api } from '../api.js'
 import { useT } from '../i18n/index.jsx'
+import LinkMaker from './LinkMaker.jsx'
 
 export const useContacts = () => useQuery({ queryKey: ['contacts'], queryFn: () => api('/shares/contacts') })
 
@@ -58,6 +59,7 @@ export default function ShareSheet({ entityType, entityId }) {
             <button key={c.id} onClick={() => shareWith(c.id)} className="rounded-full bg-rose-50 px-3 py-1">{c.display_name}</button>
           ))}
           {contacts.length === 0 && <span className="text-xs">{t('shares.noContacts')}</span>}
+          <div className="mt-2 w-full border-t border-rose-100 pt-2"><LinkMaker scope="item" entityType={entityType} entityId={entityId} /></div>
         </div>
       )}
       {error && <p className="text-xs text-red-600">{error}</p>}

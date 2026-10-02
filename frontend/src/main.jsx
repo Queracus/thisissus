@@ -19,6 +19,7 @@ import MapPage from './pages/Map.jsx'
 import NewIdea from './pages/NewIdea.jsx'
 import RecipeDetail from './pages/RecipeDetail.jsx'
 import RecipeForm from './pages/RecipeForm.jsx'
+import PublicLink from './pages/PublicLink.jsx'
 import Recipes from './pages/Recipes.jsx'
 import SharedWithMe, { SharedItem } from './pages/SharedWithMe.jsx'
 import Shopping from './pages/Shopping.jsx'
@@ -62,6 +63,8 @@ createRoot(document.getElementById('root')).render(
           <Route path="/join/:token" element={<RequireAuth><Join /></RequireAuth>} />
           <Route path="/login" element={<Login />} />
           <Route path="/invite/:token" element={<Invite />} />
+          <Route path="/s/:token" element={<PublicLink />} />
+          <Route path="/s/:token/:type/:id" element={<PublicLink />} />
           <Route path="/recover/:token" element={<Invite recovery />} />
         </Routes>
       </BrowserRouter>

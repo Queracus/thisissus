@@ -9,7 +9,7 @@ from app import config
 from app.db import init_conn
 from app.errors import ApiError, api_error_handler, validation_error_handler
 from app.migrator import migrate
-from app.routers import admin, auth, dates, health, ideas, me, media, notifications, photos, proposals, push, recipes, shares, shopping, spaces, tags, trash
+from app.routers import admin, auth, dates, health, ideas, links, me, media, notifications, photos, proposals, push, recipes, shares, shopping, spaces, tags, trash
 
 
 @asynccontextmanager
@@ -35,7 +35,16 @@ async def reject_foreign_origin(request: Request, call_next):
     return await call_next(request)
 
 
+@app.middleware("http")
+async def noindex_links(request: Request, call_next):
+    """Secret-link pages must never end up in search engines."""
+    response = await call_next(request)
+    if request.url.path.startswith("/api/s/"):
+        response.headers["X-Robots-Tag"] = "noindex, nofollow"
+    return response
+
+
 # Every router must be listed here, otherwise it is never mounted.
-for r in (health, auth, me, admin, spaces, dates, tags, photos, media, trash, ideas, proposals, notifications, push, recipes, shopping, shares):
+for r in (health, auth, me, admin, spaces, dates, tags, photos, media, trash, ideas, proposals, notifications, push, recipes, shopping, shares, links):
     app.include_router(r.router, prefix="/api")
 app.include_router(recipes.photo_router, prefix="/api")

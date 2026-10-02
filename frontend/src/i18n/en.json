@@ -436,5 +436,17 @@
       "idea": "All ideas",
       "recipe": "All recipes"
     }
+  },
+  "links": {
+    "validFor": "Link valid for",
+    "create": "Create link",
+    "copied": "Copied. Valid until {until}. Shown only once.",
+    "gone": "This link isn't valid (anymore). 💔",
+    "until": "Link valid until {until}",
+    "expiry": {
+      "1h": "1 hour",
+      "1d": "1 day",
+      "1w": "1 week"
+    }
   }
 }

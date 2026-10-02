@@ -3,6 +3,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { api } from '../api.js'
 import { useT } from '../i18n/index.jsx'
 import { useSpaces } from '../spaces.jsx'
+import LinkMaker from './LinkMaker.jsx'
 import { ShareBadge, useContacts } from './ShareSheet.jsx'
 
 const SECTIONS = ['date', 'idea', 'recipe']
@@ -50,6 +51,7 @@ export default function SpaceShares() {
         </select>
         <button type="submit" disabled={!target} className="rounded-full bg-rose-500 px-3 py-1 font-bold text-white disabled:opacity-50">{t('shares.share')}</button>
       </form>
+      <LinkMaker key={section} scope="section" entityType={section} />
       {error && <p className="text-xs text-red-600">{error}</p>}
       <div className="flex flex-wrap gap-2">{shares.map((s) => <ShareBadge key={s.id} share={s} onRevoke={revoke} />)}</div>
       {shares.length === 0 && <p className="text-xs text-rose-400">{t('shares.none')}</p>}

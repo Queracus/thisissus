@@ -4,7 +4,8 @@ import asyncpg
 from fastapi import APIRouter, Depends, Request
 from pydantic import BaseModel, model_validator
 
-from app import sharing
+from app import config, sharing
+from app.auth.tokens import new_token
 from app.auth.deps import current_user
 from app.db import get_conn
 from app.errors import ApiError
@@ -93,6 +94,35 @@ async def revoke_share(share_id: int, user=Depends(current_user), conn: asyncpg.
     await require_member(conn, user["id"], space_id, "write")
     await conn.execute("UPDATE shares SET revoked_at = now() WHERE id = $1", share_id)
     return {"ok": True}
+
+
+LINK_TTL = {"1h": "1 hour", "1d": "1 day", "1w": "7 days"}
+
+
+class LinkIn(BaseModel):
+    scope: Literal["item", "section"]
+    entity_type: EntityType
+    entity_id: int | None = None
+    expires_in: Literal["1h", "1d", "1w"]  # links always expire
+
+    @model_validator(mode="after")
+    def item_needs_id(self):
+        if (self.scope == "item") != (self.entity_id is not None):
+            raise ValueError("entity_id is required for item shares only")
+        return self
+
+
+@router.post("/shares/links")
+async def create_link(body: LinkIn, request: Request, user=Depends(current_user), conn: asyncpg.Connection = Depends(get_conn)):
+    """Secret read-only link for someone without an account. The token is shown once; only its hash is stored."""
+    space_id = await _share_space(conn, request, body.scope, body.entity_type, body.entity_id)
+    await require_member(conn, user["id"], space_id, "write")
+    raw, token_hash = new_token()
+    row = await conn.fetchrow(
+        f"""INSERT INTO shares (space_id, created_by, scope, entity_type, entity_id, token_hash, expires_at)
+            VALUES ($1, $2, $3, $4, $5, $6, now() + interval '{LINK_TTL[body.expires_in]}') RETURNING id, expires_at""",
+        space_id, user["id"], body.scope, body.entity_type, body.entity_id, token_hash)
+    return {"id": row["id"], "url": f"{config.ORIGIN}/s/{raw}", "expires_at": row["expires_at"]}
 
 
 @router.get("/shares/contacts")

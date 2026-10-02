@@ -448,5 +448,17 @@
       "idea": "Vse ideje",
       "recipe": "Vsi recepti"
     }
+  },
+  "links": {
+    "validFor": "Povezava velja",
+    "create": "Ustvari povezavo",
+    "copied": "Kopirano. Velja do {until}. Pokaže se samo enkrat.",
+    "gone": "Ta povezava ne velja (več). 💔",
+    "until": "Povezava velja do {until}",
+    "expiry": {
+      "1h": "1 uro",
+      "1d": "1 dan",
+      "1w": "1 teden"
+    }
   }
 }
