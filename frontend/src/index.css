@@ -1,0 +1,7 @@
+/* Only CSS file: Tailwind v4 entry + font tokens. Style with Tailwind classes. */
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Playfair Display", serif;
+  --font-sans: "Quicksand", sans-serif;
+}
