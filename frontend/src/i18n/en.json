@@ -315,5 +315,26 @@
   "calendar": {
     "title": "Calendar",
     "empty": "No scheduled dates this month."
+  },
+  "notifications": {
+    "title": "Notifications",
+    "readAll": "Mark all as read",
+    "empty": "No notifications.",
+    "kind": {
+      "idea": {
+        "created": "{actor} has a new idea: {title}",
+        "done": "{actor}: you did {title}! Rate it 🎉",
+        "not_for_me": "{actor}: {title} isn't for them",
+        "reopened": "{actor} reopened {title}",
+        "comment": "{actor} commented on {title}"
+      },
+      "proposal": {
+        "created": "{actor} proposes a time for {title}",
+        "countered": "{actor} suggests another time for {title}",
+        "accepted": "{actor} accepted the time for {title} 💕",
+        "refused": "{actor}: the time for {title} doesn't work",
+        "cancelled": "{actor} cancelled the proposal for {title}"
+      }
+    }
   }
 }

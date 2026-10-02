@@ -8,6 +8,7 @@ from pydantic import AwareDatetime, BaseModel, Field, HttpUrl
 from app.auth.deps import current_user
 from app.db import get_conn
 from app.errors import ApiError
+from app.notify import notify_idea
 from app.policy import active_space, scope_sql
 from app.routers.dates import TagOut
 from app.routers.tags import set_tags, tags_json
@@ -133,6 +134,7 @@ async def create_idea(body: IdeaIn, space: asyncpg.Record = Depends(active_space
             space["id"], body.title, body.description, body.url and str(body.url), body.est_cost, body.season, user["id"])
         await set_tags(conn, "idea_tags", "idea_id", idea_id, space["id"], body.tag_ids)
         await set_invitees(conn, idea_id, space["id"], body.invitee_ids)
+        await notify_idea(conn, user["id"], idea_id, "created")
     return await visible_idea(conn, user["id"], idea_id)
 
 

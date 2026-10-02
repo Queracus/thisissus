@@ -19,6 +19,7 @@ from app.trash import purge_expired
 HANDLERS: dict[str, Handler] = {
     "media.derive": derive_media,
     "trash.purge": purge_expired,
+    "push.send": lambda conn, payload: asyncio.sleep(0),  # web push arrives in #24
 }
 PERIODIC: dict[str, int] = {
     "trash.purge": 24 * 3600,

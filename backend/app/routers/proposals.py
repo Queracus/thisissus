@@ -8,6 +8,7 @@ from pydantic import AwareDatetime, BaseModel, Field
 from app.auth.deps import current_user
 from app.db import get_conn
 from app.errors import ApiError
+from app.notify import notify_idea
 from app.proposals import Accept, Cancel, Counter, DidIt, IdeaState, NotForMe, Propose, Proposal, Refuse, Reopen, Result, TransitionError, transition
 from app.routers.ideas import participants, visible_idea
 
@@ -74,6 +75,7 @@ async def run(conn: asyncpg.Connection, user: asyncpg.Record, idea_id: int, make
         if after:
             payload = {**payload, **await after(state)}
         await save(conn, idea_id, user["id"], result, payload)
+        await notify_idea(conn, user["id"], idea_id, result.event, {**payload, "scheduled": result.state.status == "scheduled"})
     return await visible_idea(conn, user["id"], idea_id)
 
 
@@ -150,7 +152,9 @@ async def did_it(idea_id: int, body: DidItIn, user=Depends(current_user), conn: 
 @router.post("/{idea_id}/comments")
 async def comment(idea_id: int, body: CommentIn, user=Depends(current_user), conn: asyncpg.Connection = Depends(get_conn)):
     await visible_idea(conn, user["id"], idea_id)
-    await add_event(conn, idea_id, user["id"], "comment", {"text": body.text})
+    async with conn.transaction():
+        await add_event(conn, idea_id, user["id"], "comment", {"text": body.text})
+        await notify_idea(conn, user["id"], idea_id, "comment", {"text": body.text[:140]})
     return {"ok": True}
 
 

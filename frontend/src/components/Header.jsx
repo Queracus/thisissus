@@ -1,4 +1,5 @@
 import { NavLink } from 'react-router-dom'
+import Bell from './Bell.jsx'
 import { useMe } from '../auth.js'
 import { useT } from '../i18n/index.jsx'
 import { useSpaces } from '../spaces.jsx'
@@ -18,6 +19,7 @@ export default function Header() {
           {spaces.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
         </select>
       )}
+      <Bell />
       <nav className="flex flex-wrap gap-4">
         <NavLink to="/" end className={link}>{t('nav.home')}</NavLink>
         {active && <NavLink to="/ideas" className={link}>{t('nav.ideas')}</NavLink>}

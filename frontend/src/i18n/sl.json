@@ -323,5 +323,26 @@
   "calendar": {
     "title": "Koledar",
     "empty": "Ta mesec ni dogovorjenih zmenkov."
+  },
+  "notifications": {
+    "title": "Obvestila",
+    "readAll": "Označi vse kot prebrano",
+    "empty": "Ni obvestil.",
+    "kind": {
+      "idea": {
+        "created": "{actor} ima novo idejo: {title}",
+        "done": "{actor}: šla sta na {title}! Oceni ga 🎉",
+        "not_for_me": "{actor}: {title} ni zanj/zanjo",
+        "reopened": "{actor} je ponovno odprl/a {title}",
+        "comment": "{actor} je komentiral/a {title}"
+      },
+      "proposal": {
+        "created": "{actor} predlaga termin za {title}",
+        "countered": "{actor} predlaga drug termin za {title}",
+        "accepted": "{actor} je sprejel/a termin za {title} 💕",
+        "refused": "{actor}: termin za {title} ne ustreza",
+        "cancelled": "{actor} je preklical/a predlog za {title}"
+      }
+    }
   }
 }
