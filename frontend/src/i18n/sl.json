@@ -97,7 +97,8 @@
     "space": "Prostor",
     "settings": "Nastavitve",
     "admin": "Admin",
-    "dates": "Zmenki"
+    "dates": "Zmenki",
+    "map": "Zemljevid"
   },
   "space": {
     "none": "Še nisi v nobenem prostoru. Prosi nekoga za povabilo.",
@@ -177,5 +178,12 @@
     "delete": "Odstrani",
     "confirmDelete": "Odstranim to fotko?",
     "close": "Zapri"
+  },
+  "map": {
+    "title": "Kje sva že bila",
+    "empty": "Še ni zmenkov z lokacijo.",
+    "pin": "Lokacija (tapni zemljevid)",
+    "useSuggestion": "Uporabi lokacijo iz fotk",
+    "clear": "Odstrani pin"
   }
 }

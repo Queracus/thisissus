@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { useNavigate, useParams } from 'react-router-dom'
 import { api } from '../api.js'
+import PinPicker from '../components/PinPicker.jsx'
 import { Button } from '../components/Screen.jsx'
 import { TagPicker } from '../components/Tags.jsx'
 import { fromLocalInput, toLocalInput, useDate } from '../dates.js'
@@ -21,6 +22,7 @@ function Form({ initial }) {
     cost: initial?.cost ?? '',
   })
   const [tagIds, setTagIds] = useState(initial?.tags.map((tag) => tag.id) ?? [])
+  const [pin, setPin] = useState({ lat: initial?.lat ?? null, lon: initial?.lon ?? null })
   const [multiDay, setMultiDay] = useState(!!initial?.ends_at)
   const [error, setError] = useState(null)
   const set = (k) => (e) => setV({ ...v, [k]: e.target.value })
@@ -34,8 +36,8 @@ function Form({ initial }) {
       ends_at: multiDay ? fromLocalInput(v.ends_at) : null,
       place_name: v.place_name || null,
       cost: v.cost === '' ? null : Number(v.cost),
-      lat: initial?.lat ?? null,
-      lon: initial?.lon ?? null,
+      lat: pin.lat,
+      lon: pin.lon,
       tag_ids: tagIds,
     }
     try {
@@ -57,6 +59,7 @@ function Form({ initial }) {
       {multiDay && <label className="text-sm">{t('dates.field.ends_at')}<input required type="datetime-local" className={field} value={v.ends_at} onChange={set('ends_at')} /></label>}
       <label className="text-sm">{t('dates.field.place_name')}<input className={field} value={v.place_name} onChange={set('place_name')} /></label>
       <label className="text-sm">{t('dates.field.cost')}<input type="number" min="0" step="0.01" inputMode="decimal" className={field} value={v.cost} onChange={set('cost')} /></label>
+      <div className="text-sm">{t('map.pin')}<PinPicker dateId={initial?.id} value={pin} onChange={setPin} /></div>
       <div className="text-sm">{t('tags.title')}<TagPicker value={tagIds} onChange={setTagIds} /></div>
       <Button type="submit">{t('dates.save')}</Button>
       {error && <p className="text-sm text-red-600">{error}</p>}

@@ -21,6 +21,7 @@ export default function Header() {
       <nav className="flex flex-wrap gap-4">
         <NavLink to="/" end className={link}>{t('nav.home')}</NavLink>
         {active && <NavLink to="/dates" className={link}>{t('nav.dates')}</NavLink>}
+        {active && <NavLink to="/map" className={link}>{t('nav.map')}</NavLink>}
         {active && <NavLink to="/space" className={link}>{t('nav.space')}</NavLink>}
         <NavLink to="/settings" className={link}>{t('nav.settings')}</NavLink>
         {me.permissions.includes('manage_users') && <NavLink to="/admin" className={link}>{t('nav.admin')}</NavLink>}

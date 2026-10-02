@@ -95,7 +95,8 @@
     "space": "Space",
     "settings": "Settings",
     "admin": "Admin",
-    "dates": "Dates"
+    "dates": "Dates",
+    "map": "Map"
   },
   "space": {
     "none": "You're not in any space yet. Ask someone for an invite.",
@@ -173,5 +174,12 @@
     "delete": "Remove",
     "confirmDelete": "Remove this photo?",
     "close": "Close"
+  },
+  "map": {
+    "title": "Where we've been",
+    "empty": "No dates with a location yet.",
+    "pin": "Location (tap the map)",
+    "useSuggestion": "Use location from photos",
+    "clear": "Remove pin"
   }
 }

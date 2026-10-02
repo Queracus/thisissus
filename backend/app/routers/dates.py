@@ -99,6 +99,27 @@ async def list_dates(space: asyncpg.Record = Depends(active_space), conn: asyncp
     return [dict(r) for r in rows]
 
 
+@router.get("/map")  # before /{date_id} so "map" isn't parsed as an id
+async def map_points(space: asyncpg.Record = Depends(active_space), conn: asyncpg.Connection = Depends(get_conn)):
+    rows = await conn.fetch(
+        """SELECT d.id, d.title, d.starts_at, d.lat, d.lon,
+                  (SELECT m.id FROM date_media dm JOIN media m ON m.id = dm.media_id
+                   WHERE dm.date_id = d.id AND m.status = 'ready' AND m.deleted_at IS NULL ORDER BY dm.position LIMIT 1) AS thumb_id
+           FROM dates d WHERE d.space_id = $1 AND d.deleted_at IS NULL AND d.lat IS NOT NULL AND d.lon IS NOT NULL
+           ORDER BY d.starts_at DESC""", space["id"])
+    return [dict(r) for r in rows]
+
+
+@router.get("/{date_id}/suggested-location")
+async def suggested_location(date_id: int, user: asyncpg.Record = Depends(current_user), conn: asyncpg.Connection = Depends(get_conn)):
+    """GPS from the first photo that has it (members only; derivatives and shares never expose this)."""
+    await visible_date(conn, user["id"], date_id)
+    row = await conn.fetchrow(
+        """SELECT (m.exif->>'lat')::float AS lat, (m.exif->>'lon')::float AS lon FROM date_media dm JOIN media m ON m.id = dm.media_id
+           WHERE dm.date_id = $1 AND m.deleted_at IS NULL AND m.exif ? 'lat' ORDER BY dm.position LIMIT 1""", date_id)
+    return dict(row) if row else None
+
+
 @router.post("", response_model=DateOut)
 async def create_date(body: DateIn, space: asyncpg.Record = Depends(active_space), user: asyncpg.Record = Depends(current_user),
                       conn: asyncpg.Connection = Depends(get_conn)):
