@@ -20,6 +20,7 @@ import NewIdea from './pages/NewIdea.jsx'
 import RecipeDetail from './pages/RecipeDetail.jsx'
 import RecipeForm from './pages/RecipeForm.jsx'
 import Recipes from './pages/Recipes.jsx'
+import Shopping from './pages/Shopping.jsx'
 import Trash from './pages/Trash.jsx'
 import Join from './pages/Join.jsx'
 import Space from './pages/Space.jsx'
@@ -45,6 +46,7 @@ createRoot(document.getElementById('root')).render(
           <Route path="/ideas" element={<RequireAuth><Ideas /></RequireAuth>} />
           <Route path="/calendar" element={<RequireAuth><Calendar /></RequireAuth>} />
           <Route path="/recipes" element={<RequireAuth><Recipes /></RequireAuth>} />
+          <Route path="/shopping" element={<RequireAuth><Shopping /></RequireAuth>} />
           <Route path="/recipes/new" element={<RequireAuth><RecipeForm /></RequireAuth>} />
           <Route path="/recipes/:id" element={<RequireAuth><RecipeDetail /></RequireAuth>} />
           <Route path="/recipes/:id/edit" element={<RequireAuth><RecipeForm /></RequireAuth>} />

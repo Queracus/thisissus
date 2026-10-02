@@ -7,10 +7,12 @@ export function useRecipes(status) {
   return useQuery({ queryKey: ['recipes', active?.id, status], queryFn: () => api(`/recipes?status=${status}`), enabled: !!active })
 }
 
-export const useRecipe = (id) =>
+// portions (optional): the backend scales ingredient amounts.
+export const useRecipe = (id, portions) =>
   useQuery({
-    queryKey: ['recipe', id],
-    queryFn: () => api(`/recipes/${id}`),
+    queryKey: ['recipe', id, portions ?? null],
+    queryFn: () => api(`/recipes/${id}${portions ? `?portions=${portions}` : ''}`),
+    placeholderData: (prev) => prev,
     enabled: !!id,
     refetchInterval: (q) => (q.state.data?.photos?.some((p) => p.status === 'pending') ? 3000 : false),
   })

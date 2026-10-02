@@ -123,7 +123,8 @@
     "map": "Zemljevid",
     "trash": "Koš",
     "ideas": "Ideje",
-    "recipes": "Recepti"
+    "recipes": "Recepti",
+    "shopping": "Nakup"
   },
   "space": {
     "none": "Še nisi v nobenem prostoru. Prosi nekoga za povabilo.",
@@ -413,5 +414,13 @@
     "lastCooked": "nazadnje {when}",
     "importTitle": "Uvozi recept s spletne strani",
     "import": "Uvozi"
+  },
+  "shopping": {
+    "title": "Nakupovalni seznam",
+    "addPlaceholder": "Kaj kupiti ...",
+    "empty": "Seznam je prazen.",
+    "clearChecked": "Počisti kupljeno",
+    "addRecipe": "Dodaj v nakupovalni seznam",
+    "added": "Dodano v seznam ✓"
   }
 }

@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { api } from '../api.js'
@@ -13,7 +14,15 @@ export default function RecipeDetail() {
   const { t, tError, locale } = useT()
   const qc = useQueryClient()
   const navigate = useNavigate()
-  const { data: r, error } = useRecipe(id)
+  const [portions, setPortions] = useState(null)
+  const { data: r, error } = useRecipe(id, portions)
+  const [added, setAdded] = useState(false)
+
+  async function toShopping() {
+    await api('/shopping/from-recipe', { method: 'POST', body: JSON.stringify({ recipe_id: r.id, portions: r.portions }) })
+    qc.invalidateQueries({ queryKey: ['shopping'] })
+    setAdded(true)
+  }
 
   async function onDelete() {
     if (!confirm(t('recipes.confirmDelete'))) return
@@ -37,12 +46,22 @@ export default function RecipeDetail() {
           <Photos base={`/recipes/${r.id}`} queryKey={['recipe', String(r.id)]} photos={r.photos} />
           {r.ingredients.length > 0 && (
             <section className="rounded-2xl bg-white p-4 shadow-sm">
-              <h2 className="mb-2 font-bold">{t('recipes.ingredients')}</h2>
+              <div className="mb-2 flex items-center justify-between">
+                <h2 className="font-bold">{t('recipes.ingredients')}</h2>
+                <div className="flex items-center gap-2 text-sm">
+                  <button onClick={() => setPortions(Math.max(1, r.portions - 1))} className="h-7 w-7 rounded-full bg-rose-100 font-bold">−</button>
+                  <span>{t('recipes.portions', { count: r.portions })}</span>
+                  <button onClick={() => setPortions(r.portions + 1)} className="h-7 w-7 rounded-full bg-rose-100 font-bold">+</button>
+                </div>
+              </div>
               <ul className="flex flex-col gap-1 text-sm">
                 {r.ingredients.map((i, n) => (
                   <li key={n}><span className="font-bold">{formatAmount(locale, i.amount)} {i.unit}</span> {i.item}</li>
                 ))}
               </ul>
+              <button onClick={toShopping} className="mt-3 text-sm font-bold text-rose-600 underline">
+                🛒 {t(added ? 'shopping.added' : 'shopping.addRecipe')}
+              </button>
             </section>
           )}
           {r.steps.length > 0 && (

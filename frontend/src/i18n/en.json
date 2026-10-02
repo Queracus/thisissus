@@ -121,7 +121,8 @@
     "map": "Map",
     "trash": "Trash",
     "ideas": "Ideas",
-    "recipes": "Recipes"
+    "recipes": "Recipes",
+    "shopping": "Shopping"
   },
   "space": {
     "none": "You're not in any space yet. Ask someone for an invite.",
@@ -401,5 +402,13 @@
     "lastCooked": "last {when}",
     "importTitle": "Import a recipe from a web page",
     "import": "Import"
+  },
+  "shopping": {
+    "title": "Shopping list",
+    "addPlaceholder": "What to buy ...",
+    "empty": "The list is empty.",
+    "clearChecked": "Clear bought items",
+    "addRecipe": "Add to shopping list",
+    "added": "Added to the list ✓"
   }
 }

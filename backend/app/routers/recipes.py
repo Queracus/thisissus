@@ -3,7 +3,7 @@ from typing import Literal
 
 import asyncpg
 import httpx
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from pydantic import BaseModel, Field, HttpUrl
 
 from app import recipe_import
@@ -14,6 +14,7 @@ from app.jobs import enqueue
 from app.media import store
 from app.notify import notify_space
 from app.policy import active_space, scope_sql
+from app.recipes_tools import scale
 from app.routers.dates import TagOut
 from app.routers.photos import gallery, gallery_router
 from app.routers.tags import set_tags, tags_json
@@ -86,10 +87,14 @@ async def visible_recipe(conn: asyncpg.Connection, user_id: int, recipe_id: int)
     return dict(row)
 
 
-async def full_recipe(conn: asyncpg.Connection, user_id: int, recipe_id: int) -> dict:
+async def full_recipe(conn: asyncpg.Connection, user_id: int, recipe_id: int, portions: int | None = None) -> dict:
+    """With `portions`, ingredient amounts are scaled to that many portions."""
     recipe = await visible_recipe(conn, user_id, recipe_id)
     recipe["ingredients"] = [dict(r) for r in await conn.fetch(
         "SELECT amount::float AS amount, unit, item FROM recipe_ingredients WHERE recipe_id = $1 ORDER BY position", recipe_id)]
+    if portions and portions != recipe["portions"]:
+        recipe["ingredients"] = scale(recipe["ingredients"], recipe["portions"], portions)
+        recipe["portions"] = portions
     recipe["steps"] = [r["text"] for r in await conn.fetch("SELECT text FROM recipe_steps WHERE recipe_id = $1 ORDER BY position", recipe_id)]
     recipe["photos"] = await gallery(conn, "recipe_media", "recipe_id", recipe_id)
     recipe["reviews"] = [dict(r) for r in await conn.fetch(
@@ -134,8 +139,9 @@ async def create_recipe(body: RecipeIn, space=Depends(active_space), user=Depend
 
 
 @router.get("/{recipe_id}", response_model=RecipeOut)
-async def get_recipe(recipe_id: int, user=Depends(current_user), conn: asyncpg.Connection = Depends(get_conn)):
-    return await full_recipe(conn, user["id"], recipe_id)
+async def get_recipe(recipe_id: int, user=Depends(current_user), conn: asyncpg.Connection = Depends(get_conn),
+                     portions: int | None = Query(default=None, ge=1, le=100)):
+    return await full_recipe(conn, user["id"], recipe_id, portions)
 
 
 @router.put("/{recipe_id}", response_model=RecipeOut)
