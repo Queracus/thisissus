@@ -1,0 +1,1033 @@
+<!doctype html>
+<html lang="sl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dejt? 💌</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,700&family=Quicksand:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --rose: #ffccd5;
+        --rose-deep: #ff9aad;
+        --rose-dark: #ff6b8b;
+        --lavender: #e6e6fa;
+        --lavender-deep: #c8c0e0;
+        --peach: #ffe6d5;
+        --mint: #d6f6e3;
+        --cream: #fff8f5;
+        --ink: #4a2e3a;
+        --shadow: rgba(255, 154, 173, 0.25);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        height: 100%;
+        font-family: "Quicksand", sans-serif;
+        background: linear-gradient(
+          135deg,
+          var(--rose) 0%,
+          var(--lavender) 50%,
+          var(--mint) 100%
+        );
+        background-attachment: fixed;
+        color: var(--ink);
+        overflow-x: hidden;
+        overflow-y: auto;
+        user-select: none;
+      }
+
+      /* Floating hearts background */
+      .bg-hearts {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 0;
+        overflow: hidden;
+      }
+      .heart {
+        position: absolute;
+        font-size: 1.4rem;
+        color: var(--rose-deep);
+        opacity: 0.35;
+        animation: floatUp linear infinite;
+      }
+      @keyframes floatUp {
+        0% {
+          transform: translateY(110vh) rotate(0deg) scale(0.6);
+          opacity: 0.2;
+        }
+        50% {
+          opacity: 0.5;
+        }
+        100% {
+          transform: translateY(-10vh) rotate(30deg) scale(1.1);
+          opacity: 0;
+        }
+      }
+
+      /* Page container */
+      .container {
+        position: relative;
+        z-index: 1;
+        max-width: 560px;
+        margin: 0 auto;
+        padding: 3rem 1.5rem;
+        text-align: center;
+        min-height: 100vh;
+        min-height: 100dvh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+
+      /* Card */
+      .card {
+        background: rgba(255, 255, 255, 0.72);
+        backdrop-filter: blur(18px) saturate(1.3);
+        -webkit-backdrop-filter: blur(18px) saturate(1.3);
+        border: 2.5px solid rgba(255, 255, 255, 0.6);
+        border-radius: 36px;
+        padding: 3.5rem 2.5rem;
+        box-shadow:
+          0 25px 60px var(--shadow),
+          0 0 0 1px rgba(255, 255, 255, 0.35) inset;
+        animation: popIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+        transition: transform 0.25s ease;
+      }
+      @keyframes popIn {
+        from {
+          opacity: 0;
+          transform: scale(0.92) translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1) translateY(0);
+        }
+      }
+
+      h1,
+      h2 {
+        font-family: "Playfair Display", serif;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        line-height: 1.2;
+        overflow-wrap: break-word;
+        word-break: break-word;
+      }
+
+      h1 {
+        font-size: 2.6rem;
+        color: var(--rose-dark);
+        margin-bottom: 0.25rem;
+      }
+      h2 {
+        font-size: 2rem;
+        color: var(--rose-dark);
+        margin-bottom: 0.25rem;
+      }
+
+      .subtitle {
+        font-size: 1.1rem;
+        color: var(--ink);
+        opacity: 0.7;
+        margin-bottom: 2.5rem;
+        line-height: 1.5;
+      }
+
+      /* Buttons */
+      .btn-row {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .btn {
+        position: relative;
+        overflow: hidden;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        border-radius: 50px;
+        padding: 1rem 2rem;
+        min-width: 150px;
+        font-family: "Quicksand", sans-serif;
+        font-weight: 700;
+        font-size: 1.05rem;
+        cursor: pointer;
+        box-shadow:
+          0 8px 24px rgba(0, 0, 0, 0.08),
+          0 2px 6px rgba(0, 0, 0, 0.04);
+        transition:
+          transform 0.15s ease,
+          box-shadow 0.25s ease,
+          background 0.25s ease;
+        letter-spacing: 0.01em;
+      }
+      .btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 14px 30px rgba(0, 0, 0, 0.12);
+      }
+      .btn:active {
+        transform: translateY(0) scale(0.97);
+      }
+
+      .btn-yes,
+      .btn-no {
+        width: 170px;
+        white-space: nowrap;
+      }
+
+      .btn-yes {
+        background: linear-gradient(
+          135deg,
+          var(--rose-deep) 0%,
+          var(--rose-dark) 100%
+        );
+        color: white;
+      }
+      .btn-yes:hover {
+        background: linear-gradient(135deg, var(--rose-dark) 0%, #ff5a80 100%);
+      }
+
+      .btn-no {
+        background: linear-gradient(
+          135deg,
+          var(--lavender-deep) 0%,
+          #c8b8e8 100%
+        );
+        color: var(--ink);
+      }
+      .btn-no:hover {
+        background: linear-gradient(135deg, #c8b8e8 0%, #b0a0d0 100%);
+      }
+
+      .btn-opt {
+        background: linear-gradient(
+          135deg,
+          var(--rose-deep) 0%,
+          var(--rose-dark) 100%
+        );
+        color: white;
+        padding: 1.1rem 1.8rem;
+        font-size: 1.1rem;
+        min-width: 140px;
+      }
+      .btn-opt:hover {
+        background: linear-gradient(135deg, var(--rose-dark) 0%, #ff5a80 100%);
+      }
+
+      /* Small decorative icon in buttons */
+      .btn-emoji {
+        font-size: 1.2rem;
+        margin-right: 0.4rem;
+        line-height: 1;
+      }
+
+      /* Date picker section */
+      .date-section {
+        display: flex;
+        gap: 0.75rem;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 1rem;
+      }
+      .date-section input[type="date"],
+      .date-section input[type="time"] {
+        border: 2px solid var(--lavender-deep);
+        border-radius: 20px;
+        padding: 0.85rem 1rem;
+        font-family: "Quicksand", sans-serif;
+        font-weight: 700;
+        font-size: 1rem;
+        background: rgba(255, 255, 255, 0.85);
+        color: var(--ink);
+        outline: none;
+        box-shadow: 0 4px 12px rgba(200, 192, 224, 0.15);
+        transition:
+          border-color 0.2s,
+          box-shadow 0.2s;
+        cursor: pointer;
+      }
+      .date-section input:focus {
+        border-color: var(--rose-deep);
+        box-shadow: 0 6px 18px rgba(255, 154, 173, 0.2);
+      }
+
+      .submit-btn {
+        margin-top: 1.5rem;
+        background: linear-gradient(
+          135deg,
+          var(--rose-deep) 0%,
+          var(--rose-dark) 100%
+        );
+        color: white;
+        padding: 1rem 2.8rem;
+        font-size: 1.15rem;
+        border-radius: 50px;
+        border: none;
+        font-family: "Quicksand", sans-serif;
+        font-weight: 700;
+        cursor: pointer;
+        box-shadow: 0 8px 24px rgba(255, 154, 173, 0.35);
+        transition:
+          transform 0.15s ease,
+          box-shadow 0.25s ease;
+      }
+      .submit-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 14px 30px rgba(255, 154, 173, 0.45);
+      }
+
+      /* Result / saved message */
+      .saved-msg {
+        margin-top: 1.2rem;
+        padding: 1rem 1.2rem;
+        background: rgba(214, 246, 227, 0.6);
+        border: 1.5px solid var(--mint);
+        border-radius: 20px;
+        font-weight: 700;
+        color: #2a6b3a;
+        animation: fadeIn 0.4s ease;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(6px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Page transitions */
+      .page {
+        display: none;
+      }
+      .page.active {
+        display: block;
+      }
+
+      /* Decorative flower above the page-1 title (replaces the old pill) */
+      .page1-deco {
+        font-size: 3rem;
+        line-height: 1;
+        margin-bottom: 0.75rem;
+        filter: drop-shadow(0 6px 14px var(--shadow));
+        animation: popIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+      }
+
+      /* Section label — same dramatic serif style as the h1/h2 titles, no pill */
+      .section-label {
+        font-family: "Playfair Display", serif;
+        font-style: italic;
+        font-weight: 700;
+        color: var(--rose-dark);
+        font-size: 1.25rem;
+        letter-spacing: 0.01em;
+        margin-bottom: 1.2rem;
+      }
+
+      /* Sub-choice option rows — clean text with emoji, no pill */
+      .opt-row {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+        margin-top: 0.25rem;
+        width: 100%;
+      }
+      .opt-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.85rem 1rem;
+        border-radius: 16px;
+        border: none;
+        background: transparent;
+        font-family: "Quicksand", sans-serif;
+        font-weight: 700;
+        font-size: 1.05rem;
+        color: var(--ink);
+        cursor: pointer;
+        text-align: left;
+        width: 100%;
+        transition:
+          background 0.15s ease,
+          color 0.15s ease;
+      }
+      .opt-item:hover {
+        background: rgba(255, 154, 173, 0.12);
+      }
+      .opt-item.selected {
+        background: linear-gradient(
+          135deg,
+          rgba(255, 154, 173, 0.22),
+          rgba(255, 107, 139, 0.14)
+        );
+        color: var(--rose-dark);
+      }
+      .opt-item .opt-emoji {
+        font-size: 1.3rem;
+        flex-shrink: 0;
+        width: 1.8rem;
+        text-align: center;
+      }
+      .opt-divider {
+        height: 1px;
+        background: rgba(200, 192, 224, 0.35);
+        margin: 0 0.5rem;
+      }
+
+      /* Drugo text input */
+      .drugo-wrap {
+        display: none;
+        margin-top: 0.75rem;
+        animation: fadeIn 0.3s ease;
+      }
+      .drugo-wrap.visible {
+        display: block;
+      }
+      .drugo-input {
+        width: 100%;
+        border: 2px solid var(--lavender-deep);
+        border-radius: 20px;
+        padding: 0.85rem 1.2rem;
+        font-family: "Quicksand", sans-serif;
+        font-weight: 600;
+        font-size: 1rem;
+        background: rgba(255, 255, 255, 0.85);
+        color: var(--ink);
+        outline: none;
+        box-sizing: border-box;
+        transition:
+          border-color 0.2s,
+          box-shadow 0.2s;
+      }
+      .drugo-input:focus {
+        border-color: var(--rose-deep);
+        box-shadow: 0 4px 14px rgba(255, 154, 173, 0.2);
+      }
+      .drugo-input::placeholder {
+        opacity: 0.5;
+      }
+
+      /* Responsive */
+      @media (max-width: 520px) {
+        .container {
+          padding: 2rem 1rem;
+        }
+        .card {
+          padding: 2.2rem 1.2rem;
+          border-radius: 24px;
+        }
+        h1 {
+          font-size: 2rem;
+        }
+        h2 {
+          font-size: 1.55rem;
+        }
+        .btn {
+          padding: 0.85rem 1.2rem;
+          font-size: 0.95rem;
+        }
+        .btn-yes,
+        .btn-no {
+          width: 140px;
+          min-width: 0;
+        }
+        .date-section {
+          flex-direction: column;
+          align-items: stretch;
+        }
+        .date-section input[type="date"],
+        .date-section input[type="time"] {
+          width: 100%;
+        }
+        .submit-btn {
+          width: 100%;
+        }
+      }
+
+      @media (max-width: 360px) {
+        .card {
+          padding: 1.8rem 1rem;
+        }
+        .page1-deco {
+          font-size: 2.4rem;
+        }
+        h1 {
+          font-size: 1.7rem;
+        }
+        .section-label {
+          font-size: 1.1rem;
+        }
+        .btn-yes,
+        .btn-no {
+          width: 118px;
+          min-width: 0;
+          padding: 0.8rem 0.7rem;
+          font-size: 0.85rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="bg-hearts" id="bgHearts" aria-hidden="true"></div>
+
+    <main class="container">
+      <!-- ===== PAGE 1 ===== -->
+      <section class="page active" id="page1" aria-label="Vprašanje za zmenek">
+        <div class="card" role="region" aria-live="polite">
+          <div class="page1-deco" aria-hidden="true">🌸</div>
+          <h1>Greva na dejt?</h1>
+          <div class="btn-row" style="margin-top: 2rem; align-items: center">
+            <button
+              class="btn btn-yes"
+              onclick="goPage2()"
+              aria-label="Ja, itak"
+            >
+              <span class="btn-emoji">💖</span>Ja, itak!
+            </button>
+            <button class="btn btn-no" id="btnNo" aria-label="Ne!">
+              <span class="btn-emoji">😢</span>Ne!
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== PAGE 2 ===== -->
+      <section class="page" id="page2" aria-label="Izbira zmenka">
+        <div class="card" role="region">
+          <h2>OMG — dobra odločitev</h2>
+          <p class="subtitle">Kam naju najbolj vleče? 💕</p>
+          <div class="btn-row" style="flex-wrap: wrap; gap: 0.75rem">
+            <button
+              class="btn btn-opt"
+              onclick="chooseOption('pijača')"
+              aria-label="Pijača"
+            >
+              🍹 Pijača
+            </button>
+            <button
+              class="btn btn-opt"
+              onclick="chooseOption('sprehod')"
+              aria-label="Sprehod"
+            >
+              🌸 Sprehod
+            </button>
+            <button
+              class="btn btn-opt"
+              onclick="chooseOption('adrenalin')"
+              aria-label="Adrenalin"
+            >
+              ⚡ Adrenalin
+            </button>
+            <button
+              class="btn btn-opt"
+              onclick="chooseOption('biljard')"
+              aria-label="Biljard"
+            >
+              🎱 Biljard
+            </button>
+            <button
+              class="btn btn-opt"
+              onclick="chooseOption('večerja')"
+              aria-label="Večerja"
+            >
+              🍽️ Večerja
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== PAGE 2b — sub-choice (location / detail) ===== -->
+      <section class="page" id="page2b" aria-label="Podrobnosti zmenka">
+        <div class="card" role="region">
+          <div class="section-label" id="p2bRibbon">📍 Kje se dobiva?</div>
+          <div class="opt-row" id="p2bOptions">
+            <!-- filled dynamically -->
+          </div>
+          <div class="drugo-wrap" id="drugoWrap">
+            <input
+              class="drugo-input"
+              id="drugoInput"
+              type="text"
+              placeholder="Napiši svojo idejo…"
+              maxlength="120"
+            />
+          </div>
+          <button
+            class="submit-btn"
+            id="p2bNext"
+            style="margin-top: 1.25rem; opacity: 0.45; cursor: not-allowed"
+            onclick="confirmSubChoice()"
+          >
+            Naprej 💕
+          </button>
+        </div>
+      </section>
+
+      <!-- ===== PAGE 3 ===== -->
+      <section class="page" id="page3" aria-label="Rezervacija datuma">
+        <div class="card" role="region">
+          <h2>Odlično! Kdaj se dobiva?</h2>
+          <form
+            onsubmit="saveDate(event)"
+            aria-label="Obrazec za rezervacijo zmenka"
+          >
+            <div class="date-section">
+              <input
+                type="date"
+                id="datePick"
+                required
+                aria-label="Izberi datum"
+              />
+              <input
+                type="time"
+                id="timePick"
+                required
+                aria-label="Izberi uro"
+              />
+            </div>
+            <button class="submit-btn" type="submit" aria-label="Rezerviraj">
+              💌 Rezerviraj
+            </button>
+          </form>
+        </div>
+      </section>
+
+      <!-- ===== PAGE 4 — confirmation ===== -->
+      <section class="page" id="page4" aria-label="Potrjen zmenek">
+        <div class="card" role="region" aria-live="polite">
+          <div class="page1-deco" aria-hidden="true">💕</div>
+          <h2>Nice! Se vidiva :*</h2>
+          <p class="subtitle" id="confirmMsg" style="margin-bottom: 0"></p>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      // ===== Background floating hearts =====
+      (function () {
+        const container = document.getElementById("bgHearts");
+        const count = 14;
+        for (let i = 0; i < count; i++) {
+          const h = document.createElement("span");
+          h.className = "heart";
+          h.textContent = "💖";
+          h.style.left = Math.random() * 100 + "%";
+          h.style.animationDuration = 6 + Math.random() * 8 + "s";
+          h.style.animationDelay = Math.random() * 6 + "s";
+          h.style.fontSize = 1 + Math.random() * 1.2 + "rem";
+          container.appendChild(h);
+        }
+      })();
+
+      // ===== Page navigation =====
+      function goPage2() {
+        document.getElementById("page1").classList.remove("active");
+        document.getElementById("page2").classList.add("active");
+      }
+
+      let chosenOption = "";
+      let chosenDetail = ""; // location or sub-choice picked on page 2b
+
+      // Who is this link for? Add ?sub=Ana to the URL you send her, so you can
+      // tell entries apart later — e.g. yoursite.com/index.html?sub=Ana
+      const recipientName =
+        new URLSearchParams(window.location.search).get("sub") || "Neznana";
+
+      // Sub-choice config per activity
+      const subChoices = {
+        pijača: {
+          ribbon: "📍 Kje se dobiva?",
+          choices: [
+            {
+              icon: "⛲",
+              label: "Kongresni trg (pri sidru)",
+              value: "Kongresni trg (pri sidru)",
+            },
+            {
+              icon: "🗿",
+              label: "Prešernov trg (pri kipu)",
+              value: "Prešernov trg (pri kipu)",
+            },
+            { icon: "✏️", label: "Drugo:", value: "drugo", isDrugo: true },
+          ],
+        },
+        sprehod: {
+          ribbon: "📍 Kje se dobiva?",
+          choices: [
+            {
+              icon: "🏛️",
+              label: "Kongresni trg (pri sidru)",
+              value: "Kongresni trg (pri sidru)",
+            },
+            {
+              icon: "🗿",
+              label: "Prešernov trg (pri kipu)",
+              value: "Prešernov trg (pri kipu)",
+            },
+            { icon: "✏️", label: "Drugo:", value: "drugo", isDrugo: true },
+          ],
+        },
+        adrenalin: {
+          ribbon: "⚡ Kaj delava?",
+          choices: [
+            {
+              icon: "🎯",
+              label: "Surprise me :)",
+              value: "Izbira: Presenečenje!",
+            },
+            { icon: "✏️", label: "Drugo:", value: "drugo", isDrugo: true },
+          ],
+        },
+        biljard: {
+          ribbon: "🎱 Kje igramo?",
+          choices: [
+            { icon: "🏟️", label: "Arena – BTC", value: "Arena – BTC" },
+            { icon: "🎱", label: "Klub 300", value: "Klub 300" },
+          ],
+        },
+        večerja: {
+          ribbon: "🍽️ Kakšna večerja?",
+          choices: [
+            { icon: "✨", label: "Fancy", value: "Fancy" },
+            { icon: "🎓", label: "Študentska", value: "Študentska" },
+            { icon: "🍔", label: "Fastfood", value: "Fastfood" },
+          ],
+        },
+      };
+
+      function chooseOption(opt) {
+        const labels = {
+          pijača: "🍹 Pijača",
+          sprehod: "🌸 Sprehod",
+          adrenalin: "⚡ Adrenalin",
+          biljard: "🎱 Biljard",
+          večerja: "🍽️ Večerja",
+        };
+        chosenOption = opt;
+        chosenDetail = "";
+
+        document.getElementById("page2").classList.remove("active");
+
+        // All options now have sub-choices
+        buildSubChoicePage(opt);
+        document.getElementById("page2b").classList.add("active");
+      }
+
+      let selectedSubBtn = null;
+
+      function setNextEnabled(enabled) {
+        const btn = document.getElementById("p2bNext");
+        btn.style.opacity = enabled ? "1" : "0.45";
+        btn.style.cursor = enabled ? "pointer" : "not-allowed";
+        btn.style.pointerEvents = enabled ? "" : "none";
+      }
+
+      function buildSubChoicePage(opt) {
+        const cfg = subChoices[opt];
+        document.getElementById("p2bRibbon").textContent = cfg.ribbon;
+
+        const container = document.getElementById("p2bOptions");
+        container.innerHTML = "";
+        selectedSubBtn = null;
+        chosenDetail = "";
+        document.getElementById("drugoWrap").classList.remove("visible");
+        document.getElementById("drugoInput").value = "";
+        setNextEnabled(false);
+
+        cfg.choices.forEach((ch, i) => {
+          if (i > 0) {
+            const div = document.createElement("div");
+            div.className = "opt-divider";
+            container.appendChild(div);
+          }
+          const b = document.createElement("button");
+          b.className = "opt-item";
+          b.innerHTML = `<span class="opt-emoji">${ch.icon}</span><span>${ch.label}</span>`;
+          b.dataset.value = ch.value;
+          b.dataset.isDrugo = ch.isDrugo ? "1" : "0";
+          b.addEventListener("click", () => selectSubChoice(b, ch));
+          container.appendChild(b);
+        });
+      }
+
+      function selectSubChoice(btn, ch) {
+        if (selectedSubBtn) selectedSubBtn.classList.remove("selected");
+        btn.classList.add("selected");
+        selectedSubBtn = btn;
+
+        if (ch.isDrugo) {
+          document.getElementById("drugoWrap").classList.add("visible");
+          document.getElementById("drugoInput").focus();
+          chosenDetail = ""; // validated on confirm
+          // Enable next only once they type something
+          document.getElementById("drugoInput").oninput = function () {
+            setNextEnabled(this.value.trim().length > 0);
+          };
+          setNextEnabled(false);
+        } else {
+          document.getElementById("drugoWrap").classList.remove("visible");
+          chosenDetail = ch.value;
+          setNextEnabled(true);
+        }
+      }
+
+      function confirmSubChoice() {
+        if (selectedSubBtn && selectedSubBtn.dataset.isDrugo === "1") {
+          const txt = document.getElementById("drugoInput").value.trim();
+          if (!txt) return;
+          chosenDetail = "Drugo: " + txt;
+        }
+        if (!chosenDetail) return;
+
+        document.getElementById("page2b").classList.remove("active");
+        document.getElementById("page3").classList.add("active");
+      }
+
+      // ===== Runaway "No" button — physics-based =====
+      (function () {
+        const real = document.getElementById("btnNo");
+        const card = real.closest(".card");
+
+        function init() {
+          const rect = real.getBoundingClientRect();
+
+          // 1. Spacer: same size as real button, invisible, holds layout gap
+          real.style.visibility = "hidden";
+          real.style.pointerEvents = "none";
+          // Force spacer to exact same dimensions as the clone will be
+          real.style.display = "inline-block";
+          real.style.width = rect.width + "px";
+          real.style.height = rect.height + "px";
+
+          // 2. Floating clone at exact screen coords
+          const btn = document.createElement("button");
+          btn.className = real.className;
+          btn.innerHTML = real.innerHTML;
+          btn.setAttribute("aria-label", "Ne!");
+          btn.style.cssText = [
+            "position:fixed",
+            "left:" + rect.left + "px",
+            "top:" + rect.top + "px",
+            "width:" + rect.width + "px",
+            "height:" + rect.height + "px",
+            "margin:0",
+            "z-index:999",
+            "cursor:default",
+            "will-change:transform",
+            "transition:none",
+          ].join(";");
+          document.body.appendChild(btn);
+
+          // 3. Physics — offsets from original fixed position
+          let px = 0,
+            py = 0;
+          let vx = 0,
+            vy = 0;
+          let rot = 0,
+            vRot = 0;
+          let mx = -9999,
+            my = -9999;
+
+          const REPEL_RADIUS = 110; // px from button centre — feels natural
+          const REPEL_FORCE = 28; // strong enough that it always outruns cursor
+          const DAMPING = 0.84; // keeps momentum so it glides away smoothly
+          const ROT_DAMPING = 0.83;
+          const PAD = 20;
+
+          function frame() {
+            const cx = rect.left + px + rect.width / 2;
+            const cy = rect.top + py + rect.height / 2;
+            const dx = cx - mx;
+            const dy = cy - my;
+            const dist = Math.hypot(dx, dy);
+
+            if (dist < REPEL_RADIUS && dist > 1) {
+              // Force scales with closeness squared — much stronger up-close
+              const t = 1 - dist / REPEL_RADIUS;
+              const force = t * t * REPEL_FORCE;
+              vx += (dx / dist) * force;
+              vy += (dy / dist) * force;
+              vRot += (Math.random() - 0.5) * force * 0.3;
+            }
+
+            vx *= DAMPING;
+            vy *= DAMPING;
+            vRot *= ROT_DAMPING;
+            px += vx;
+            py += vy;
+            rot += vRot;
+
+            // Soft bounce off edges
+            const minX = PAD - rect.left;
+            const maxX = window.innerWidth - rect.left - rect.width - PAD;
+            const minY = PAD - rect.top;
+            const maxY = window.innerHeight - rect.top - rect.height - PAD;
+
+            if (px < minX) {
+              px = minX;
+              vx = Math.abs(vx) * 0.5;
+            }
+            if (px > maxX) {
+              px = maxX;
+              vx = -Math.abs(vx) * 0.5;
+            }
+            if (py < minY) {
+              py = minY;
+              vy = Math.abs(vy) * 0.5;
+            }
+            if (py > maxY) {
+              py = maxY;
+              vy = -Math.abs(vy) * 0.5;
+            }
+
+            btn.style.transform =
+              "translate(" + px + "px," + py + "px) rotate(" + rot + "deg)";
+            requestAnimationFrame(frame);
+          }
+
+          requestAnimationFrame(frame);
+
+          function kick(x, y) {
+            const cx = rect.left + px + rect.width / 2;
+            const cy = rect.top + py + rect.height / 2;
+            const dx = cx - x,
+              dy = cy - y;
+            const dist = Math.hypot(dx, dy) || 1;
+            // Big instant shove — a tap never fires touchmove, so this is the
+            // only warning the button gets before touchend/click would land.
+            vx += (dx / dist) * REPEL_FORCE * 3.5;
+            vy += (dy / dist) * REPEL_FORCE * 3.5;
+            vRot += (Math.random() - 0.5) * REPEL_FORCE * 2;
+          }
+
+          document.addEventListener("mousemove", (e) => {
+            mx = e.clientX;
+            my = e.clientY;
+          });
+          document.addEventListener(
+            "touchmove",
+            (e) => {
+              mx = e.touches[0].clientX;
+              my = e.touches[0].clientY;
+            },
+            { passive: true },
+          );
+          document.addEventListener(
+            "touchstart",
+            (e) => {
+              const t = e.touches[0];
+              mx = t.clientX;
+              my = t.clientY;
+              kick(mx, my);
+            },
+            { passive: true },
+          );
+
+          // Hide when page 1 is gone
+          const page1 = document.getElementById("page1");
+          new MutationObserver(() => {
+            btn.style.display = page1.classList.contains("active")
+              ? ""
+              : "none";
+          }).observe(page1, { attributes: true, attributeFilter: ["class"] });
+        }
+
+        // Wait for the card's pop-in animation to fully finish before measuring —
+        // measuring mid-animation locks the floating clone into the wrong spot.
+        let started = false;
+        function start() {
+          if (started) return;
+          started = true;
+          requestAnimationFrame(() => requestAnimationFrame(init));
+        }
+        if (card) {
+          card.addEventListener("animationend", start, { once: true });
+        }
+        // Fallback in case the animation is skipped (e.g. reduced-motion) or already done
+        window.addEventListener("load", () => setTimeout(start, 750));
+      })();
+
+      // ===== Save date & notify =====
+      function formatDateSl(isoDate) {
+        const [y, m, d] = isoDate.split("-");
+        return `${d}.${m}.${y}`;
+      }
+
+      function saveDate(e) {
+        e.preventDefault();
+        const date = document.getElementById("datePick").value;
+        const time = document.getElementById("timePick").value;
+        const optionLabels = {
+          pijača: "Pijača",
+          sprehod: "Sprehod",
+          adrenalin: "Adrenalin",
+          biljard: "Biljard",
+          večerja: "Večerja",
+        };
+        const data = {
+          kdo: recipientName,
+          zmenek: optionLabels[chosenOption] || "Neznan",
+          podrobnost: chosenDetail || "—",
+          datum: date,
+          ura: time,
+          cas: new Date().toISOString(),
+        };
+        // Save to localStorage so it survives refresh
+        localStorage.setItem("zmenek_izbira", JSON.stringify(data));
+
+        // Switch to the confirmation page
+        const place = data.podrobnost !== "—" ? data.podrobnost : "";
+        const confirmMsg = document.getElementById("confirmMsg");
+        confirmMsg.textContent = place
+          ? `${formatDateSl(date)} ob ${time}, ${place}`
+          : `${formatDateSl(date)} ob ${time}`;
+        document.getElementById("page3").classList.remove("active");
+        document.getElementById("page4").classList.add("active");
+
+        // ── HOW TO GET EMAIL ALERTS ──────────────────────────────────────────
+        // 1. Go to https://formspree.io → create free account → New Form
+        // 2. Copy your form ID (looks like "xabcd123") from the dashboard
+        // 3. Replace "YOUR_FORM_ID" below with it. That's it — Formspree
+        //    will email you every time she submits, for free (up to 50/month).
+        // ─────────────────────────────────────────────────────────────────────
+        const FORMSPREE_ID = "xvkggpwg";
+        const endpoint = `https://formspree.io/f/${FORMSPREE_ID}`;
+
+        fetch(endpoint, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify({
+            _subject: `💌 Novi zmenek! (${recipientName})`,
+            Kdo: recipientName,
+            Aktivnost: data.zmenek,
+            Podrobnost: data.podrobnost,
+            Datum: data.datum,
+            Ura: data.ura,
+            Cas_oddaje: data.cas,
+          }),
+        }).catch(() => {
+          // Silent fail — page still works even without Formspree set up
+        });
+      }
+    </script>
+  </body>
+</html>
