@@ -342,6 +342,12 @@
         "accepted": "{actor} je sprejel/a termin za {title} 💕",
         "refused": "{actor}: termin za {title} ne ustreza",
         "cancelled": "{actor} je preklical/a predlog za {title}"
+      },
+      "date": {
+        "tomorrow": "Jutri: {title} 💕"
+      },
+      "rating": {
+        "missing": "Kako je bilo na {title}? Oceni zmenek ❤️"
       }
     }
   },

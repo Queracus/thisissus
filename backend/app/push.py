@@ -19,12 +19,14 @@ TEXTS = {
            "proposal.countered": "{actor} predlaga drug termin za {title}", "proposal.accepted": "{actor} je sprejel/a termin za {title} 💕",
            "proposal.refused": "{actor}: termin za {title} ne ustreza", "proposal.cancelled": "{actor} je preklical/a predlog za {title}",
            "idea.done": "{actor}: šla sta na {title}! Oceni ga 🎉", "idea.not_for_me": "{actor}: {title} ni zanj/zanjo",
-           "idea.reopened": "{actor} je ponovno odprl/a {title}", "idea.comment": "{actor} je komentiral/a {title}"},
+           "idea.reopened": "{actor} je ponovno odprl/a {title}", "idea.comment": "{actor} je komentiral/a {title}",
+           "date.tomorrow": "Jutri: {title} 💕", "rating.missing": "Kako je bilo na {title}? Oceni zmenek ❤️"},
     "en": {"idea.created": "{actor} has a new idea: {title}", "proposal.created": "{actor} proposes a time for {title}",
            "proposal.countered": "{actor} suggests another time for {title}", "proposal.accepted": "{actor} accepted the time for {title} 💕",
            "proposal.refused": "{actor}: the time for {title} doesn't work", "proposal.cancelled": "{actor} cancelled the proposal for {title}",
            "idea.done": "{actor}: you did {title}! Rate it 🎉", "idea.not_for_me": "{actor}: {title} isn't for them",
-           "idea.reopened": "{actor} reopened {title}", "idea.comment": "{actor} commented on {title}"},
+           "idea.reopened": "{actor} reopened {title}", "idea.comment": "{actor} commented on {title}",
+           "date.tomorrow": "Tomorrow: {title} 💕", "rating.missing": "How was {title}? Rate the date ❤️"},
 }
 TEXT_FALLBACK = {"sl": "Nekaj novega v Thisissus", "en": "Something new in Thisissus"}
 

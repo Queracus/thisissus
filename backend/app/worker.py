@@ -14,6 +14,7 @@ from app.jobs import Handler, run_once, schedule_periodic
 from app.media.derive import derive_media
 from app.migrator import migrate
 from app.push import send as push_send
+from app.reminders import tick as reminders_tick
 from app.trash import purge_expired
 
 # Every job kind must be listed here, otherwise it fails with 'no handler'.
@@ -21,9 +22,11 @@ HANDLERS: dict[str, Handler] = {
     "media.derive": derive_media,
     "trash.purge": purge_expired,
     "push.send": push_send,
+    "reminders.tick": reminders_tick,
 }
 PERIODIC: dict[str, int] = {
     "trash.purge": 24 * 3600,
+    "reminders.tick": 3600,
 }
 IDLE_SECONDS = 2
 

@@ -334,6 +334,12 @@
         "accepted": "{actor} accepted the time for {title} 💕",
         "refused": "{actor}: the time for {title} doesn't work",
         "cancelled": "{actor} cancelled the proposal for {title}"
+      },
+      "date": {
+        "tomorrow": "Tomorrow: {title} 💕"
+      },
+      "rating": {
+        "missing": "How was {title}? Rate the date ❤️"
       }
     }
   },
