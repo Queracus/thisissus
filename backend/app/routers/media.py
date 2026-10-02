@@ -8,6 +8,7 @@ from app.db import get_conn
 from app.errors import ApiError
 from app.media.store import read_range
 from app.policy import scope_sql
+from app.sharing import user_can_see_media
 
 router = APIRouter(prefix="/media")
 VARIANTS = {"original", "display", "thumb", "mp4", "poster"}
@@ -32,11 +33,12 @@ async def get_media(media_id: int, variant: str, request: Request, user: asyncpg
     if variant not in VARIANTS:
         raise ApiError(404, "media.not_found")
     scope, params = scope_sql(user["id"], "o.space_id", 3)
-    row = await conn.fetchrow(
-        f"""SELECT m.id, m.mime, m.size, encode(m.sha256, 'hex') AS etag FROM media o
-            JOIN media m ON (m.id = o.id AND $2 = 'original') OR (m.parent_id = o.id AND m.variant = $2 AND m.status = 'ready')
-            WHERE o.id = $1 AND o.variant = 'original' AND o.deleted_at IS NULL AND {scope}""",
-        media_id, variant, *params)
+    sql = """SELECT m.id, m.mime, m.size, encode(m.sha256, 'hex') AS etag FROM media o
+             JOIN media m ON (m.id = o.id AND $2 = 'original') OR (m.parent_id = o.id AND m.variant = $2 AND m.status = 'ready')
+             WHERE o.id = $1 AND o.variant = 'original' AND o.deleted_at IS NULL"""
+    row = await conn.fetchrow(f"{sql} AND {scope}", media_id, variant, *params)
+    if not row and variant != "original" and await user_can_see_media(conn, user["id"], media_id):
+        row = await conn.fetchrow(sql, media_id, variant)  # shared viewer: derivatives only, never the original (EXIF/GPS)
     if not row:
         raise ApiError(404, "media.not_found")
     headers = {"Accept-Ranges": "bytes", "Cache-Control": CACHE, "ETag": f'"{row["etag"]}"'}

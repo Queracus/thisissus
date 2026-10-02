@@ -76,7 +76,8 @@
     },
     "space": {
       "not_found": "Space not found.",
-      "owner_required": "Only the space owner can do this."
+      "owner_required": "Only the space owner can do this.",
+      "required": "Pick a space first."
     },
     "date": {
       "not_found": "Date not found."
@@ -110,6 +111,10 @@
       "not_found": "Recipe not found.",
       "import_failed": "No recipe we can read on that page.",
       "url_not_allowed": "That link isn't allowed."
+    },
+    "share": {
+      "not_a_contact": "You can only share with people from your spaces.",
+      "not_found": "This isn't shared with you (anymore)."
     }
   },
   "nav": {
@@ -122,7 +127,8 @@
     "trash": "Trash",
     "ideas": "Ideas",
     "recipes": "Recipes",
-    "shopping": "Shopping"
+    "shopping": "Shopping",
+    "shared": "Shared with me"
   },
   "space": {
     "none": "You're not in any space yet. Ask someone for an invite.",
@@ -410,5 +416,25 @@
     "clearChecked": "Clear bought items",
     "addRecipe": "Add to shopping list",
     "added": "Added to the list ✓"
+  },
+  "shares": {
+    "share": "Share",
+    "title": "Sharing",
+    "link": "link",
+    "revoke": "Stop sharing",
+    "sharedWith": "{who} (shared by {by})",
+    "confirmRevoke": "Stop this share?",
+    "pickContact": "Share with (view only)?",
+    "noContacts": "Nobody shares a space with you yet.",
+    "none": "Nothing shared yet.",
+    "withMe": "Shared with me",
+    "nothingYet": "Nothing has been shared with you yet.",
+    "from": "from {name} · {space}",
+    "sharedBy": "Shared by {name}",
+    "section": {
+      "date": "All dates",
+      "idea": "All ideas",
+      "recipe": "All recipes"
+    }
   }
 }

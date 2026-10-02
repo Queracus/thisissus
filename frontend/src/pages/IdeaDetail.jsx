@@ -6,6 +6,7 @@ import IdeaFields, { formToBody, ideaToForm } from '../components/IdeaFields.jsx
 import DidIt from '../components/DidIt.jsx'
 import Negotiation from '../components/Negotiation.jsx'
 import { Button } from '../components/Screen.jsx'
+import ShareSheet from '../components/ShareSheet.jsx'
 import { TagChips } from '../components/Tags.jsx'
 import { formatCost } from '../dates.js'
 import { SEASON_EMOJI, useIdea } from '../ideas.js'
@@ -63,6 +64,7 @@ export default function IdeaDetail() {
           {editing ? <EditForm idea={idea} onDone={() => setEditing(false)} /> : (
             <>
               <TagChips tags={idea.tags} />
+              <ShareSheet entityType="idea" entityId={idea.id} />
               {idea.description && <p className="whitespace-pre-line">{idea.description}</p>}
               {idea.url && <a href={idea.url} target="_blank" rel="noreferrer noopener" className="break-all text-rose-600 underline">🔗 {idea.url}</a>}
               {idea.est_cost != null && <p>💶 ~{formatCost(locale, idea.est_cost)}</p>}

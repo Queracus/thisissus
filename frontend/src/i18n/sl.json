@@ -78,7 +78,8 @@
     },
     "space": {
       "not_found": "Prostor ne obstaja.",
-      "owner_required": "To lahko naredi samo lastnik prostora."
+      "owner_required": "To lahko naredi samo lastnik prostora.",
+      "required": "Najprej izberi prostor."
     },
     "date": {
       "not_found": "Zmenek ne obstaja."
@@ -112,6 +113,10 @@
       "not_found": "Recept ne obstaja.",
       "import_failed": "Na tej strani ni recepta, ki bi ga znala prebrati.",
       "url_not_allowed": "Te povezave ne smem odpreti."
+    },
+    "share": {
+      "not_a_contact": "Deliš lahko le z ljudmi iz svojih prostorov.",
+      "not_found": "To ni (več) deljeno z vami."
     }
   },
   "nav": {
@@ -124,7 +129,8 @@
     "trash": "Koš",
     "ideas": "Ideje",
     "recipes": "Recepti",
-    "shopping": "Nakup"
+    "shopping": "Nakup",
+    "shared": "Deljeno z mano"
   },
   "space": {
     "none": "Še nisi v nobenem prostoru. Prosi nekoga za povabilo.",
@@ -422,5 +428,25 @@
     "clearChecked": "Počisti kupljeno",
     "addRecipe": "Dodaj v nakupovalni seznam",
     "added": "Dodano v seznam ✓"
+  },
+  "shares": {
+    "share": "Deli",
+    "title": "Deljenje",
+    "link": "povezava",
+    "revoke": "Prekliči deljenje",
+    "sharedWith": "{who} (delil/a {by})",
+    "confirmRevoke": "Prekličem to deljenje?",
+    "pickContact": "S kom deliš (samo za ogled)?",
+    "noContacts": "Ni ljudi, s katerimi si v skupnem prostoru.",
+    "none": "Ničesar še ne deliš.",
+    "withMe": "Deljeno z mano",
+    "nothingYet": "Z vami še nihče ni delil ničesar.",
+    "from": "od {name} · {space}",
+    "sharedBy": "Delil/a: {name}",
+    "section": {
+      "date": "Vsi zmenki",
+      "idea": "Vse ideje",
+      "recipe": "Vsi recepti"
+    }
   }
 }

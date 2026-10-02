@@ -5,6 +5,7 @@ import { api } from '../api.js'
 import Photos from '../components/Photos.jsx'
 import RecipeCooked from '../components/RecipeCooked.jsx'
 import { Hearts } from '../components/Reviews.jsx'
+import ShareSheet from '../components/ShareSheet.jsx'
 import { TagChips } from '../components/Tags.jsx'
 import { useT } from '../i18n/index.jsx'
 import { formatAmount, useRecipe } from '../recipes.js'
@@ -42,6 +43,7 @@ export default function RecipeDetail() {
             {t(`recipes.status.${r.status}`)} · {t('recipes.portions', { count: r.portions })}{r.prep_minutes != null && ` · ⏱ ${r.prep_minutes} min`}
           </p>
           <TagChips tags={r.tags} />
+          <ShareSheet entityType="recipe" entityId={r.id} />
           {r.avg_rating != null && <p><Hearts value={r.avg_rating} /> <span className="text-sm text-rose-400">{r.avg_rating.toFixed(1)}</span></p>}
           <Photos base={`/recipes/${r.id}`} queryKey={['recipe', String(r.id)]} photos={r.photos} />
           {r.ingredients.length > 0 && (

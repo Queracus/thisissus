@@ -28,6 +28,7 @@ export default function Header() {
         {active && <NavLink to="/shopping" className={link}>{t('nav.shopping')}</NavLink>}
         {active && <NavLink to="/map" className={link}>{t('nav.map')}</NavLink>}
         {active && <NavLink to="/space" className={link}>{t('nav.space')}</NavLink>}
+        <NavLink to="/shared" className={link}>{t('nav.shared')}</NavLink>
         {active && <NavLink to="/trash" className={link}>{t('nav.trash')}</NavLink>}
         <NavLink to="/settings" className={link}>{t('nav.settings')}</NavLink>
         {me.permissions.includes('manage_users') && <NavLink to="/admin" className={link}>{t('nav.admin')}</NavLink>}

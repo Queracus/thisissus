@@ -3,6 +3,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { Navigate } from 'react-router-dom'
 import { api } from '../api.js'
 import Screen, { Button, Input } from '../components/Screen.jsx'
+import SpaceShares from '../components/SpaceShares.jsx'
 import { useT } from '../i18n/index.jsx'
 import { useSpaces } from '../spaces.jsx'
 
@@ -77,6 +78,7 @@ export default function Space() {
         ))}
       </section>
       {active.role === 'owner' && <OwnerTools key={active.id} space={active} />}
+      <SpaceShares />
     </Screen>
   )
 }
