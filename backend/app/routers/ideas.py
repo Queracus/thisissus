@@ -2,8 +2,8 @@ from datetime import datetime
 from typing import Literal
 
 import asyncpg
-from fastapi import APIRouter, Depends
-from pydantic import BaseModel, Field, HttpUrl
+from fastapi import APIRouter, Depends, Query
+from pydantic import AwareDatetime, BaseModel, Field, HttpUrl
 
 from app.auth.deps import current_user
 from app.db import get_conn
@@ -94,6 +94,32 @@ async def list_ideas(space: asyncpg.Record = Depends(active_space), conn: asyncp
     rows = await conn.fetch(
         f"""SELECT {COLUMNS} FROM {FROM} WHERE i.space_id = $1 AND i.deleted_at IS NULL AND (i.status = 'archived') = $2
             ORDER BY i.created_at DESC, i.id DESC""", space["id"], archived)
+    return [dict(r) for r in rows]
+
+
+@router.get("/random", response_model=IdeaOut | None)  # before /{idea_id}
+async def random_idea(space: asyncpg.Record = Depends(active_space), conn: asyncpg.Connection = Depends(get_conn),
+                      tag: list[int] = Query(default=[]), max_cost: float | None = None,
+                      season: Literal["spring", "summer", "autumn", "winter"] | None = None):
+    """'Surprise us': one random open idea (not pending/scheduled/archived) matching every filter, or null."""
+    params: list = [space["id"], tag, max_cost, season]
+    row = await conn.fetchrow(
+        f"""SELECT {COLUMNS} FROM {FROM}
+            WHERE i.space_id = $1 AND i.deleted_at IS NULL AND i.status = 'idea'
+              AND (cardinality($2::bigint[]) = 0 OR
+                   (SELECT count(DISTINCT tag_id) FROM idea_tags WHERE idea_id = i.id AND tag_id = ANY($2::bigint[])) = cardinality($2::bigint[]))
+              AND ($3::float IS NULL OR coalesce(i.est_cost, 0) <= $3)
+              AND ($4::text IS NULL OR i.season = $4)
+            ORDER BY random() LIMIT 1""", *params)
+    return dict(row) if row else None
+
+
+@router.get("/calendar", response_model=list[IdeaOut])
+async def calendar(from_: AwareDatetime = Query(alias="from"), to: AwareDatetime = Query(),
+                   space: asyncpg.Record = Depends(active_space), conn: asyncpg.Connection = Depends(get_conn)):
+    rows = await conn.fetch(
+        f"""SELECT {COLUMNS} FROM {FROM} WHERE i.space_id = $1 AND i.deleted_at IS NULL AND i.status = 'scheduled'
+            AND i.scheduled_at BETWEEN $2 AND $3 ORDER BY i.scheduled_at""", space["id"], from_, to)
     return [dict(r) for r in rows]
 
 

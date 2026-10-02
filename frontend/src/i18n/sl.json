@@ -313,5 +313,15 @@
       "few": "opravljeno {count}-krat",
       "other": "opravljeno {count}-krat"
     }
+  },
+  "surprise": {
+    "open": "Presenti naju",
+    "spin": "Zavrti",
+    "none": "Nobena ideja ne ustreza.",
+    "openIdea": "odpri idejo"
+  },
+  "calendar": {
+    "title": "Koledar",
+    "empty": "Ta mesec ni dogovorjenih zmenkov."
   }
 }

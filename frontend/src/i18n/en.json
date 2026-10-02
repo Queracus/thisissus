@@ -305,5 +305,15 @@
       "one": "done once",
       "other": "done {count} times"
     }
+  },
+  "surprise": {
+    "open": "Surprise us",
+    "spin": "Spin",
+    "none": "No idea matches.",
+    "openIdea": "open idea"
+  },
+  "calendar": {
+    "title": "Calendar",
+    "empty": "No scheduled dates this month."
   }
 }

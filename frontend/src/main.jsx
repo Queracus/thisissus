@@ -9,6 +9,7 @@ import Invite from './pages/Invite.jsx'
 import Login from './pages/Login.jsx'
 import Settings from './pages/Settings.jsx'
 import Admin from './pages/Admin.jsx'
+import Calendar from './pages/Calendar.jsx'
 import DateDetail from './pages/DateDetail.jsx'
 import DateForm from './pages/DateForm.jsx'
 import Dates from './pages/Dates.jsx'
@@ -36,6 +37,7 @@ createRoot(document.getElementById('root')).render(
           <Route path="/dates" element={<RequireAuth><Dates /></RequireAuth>} />
           <Route path="/map" element={<RequireAuth><MapPage /></RequireAuth>} />
           <Route path="/ideas" element={<RequireAuth><Ideas /></RequireAuth>} />
+          <Route path="/calendar" element={<RequireAuth><Calendar /></RequireAuth>} />
           <Route path="/ideas/new" element={<RequireAuth><NewIdea /></RequireAuth>} />
           <Route path="/ideas/:id" element={<RequireAuth><IdeaDetail /></RequireAuth>} />
           <Route path="/trash" element={<RequireAuth><Trash /></RequireAuth>} />

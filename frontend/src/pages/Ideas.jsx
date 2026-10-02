@@ -1,4 +1,5 @@
 import { Link, useSearchParams } from 'react-router-dom'
+import SurprisePicker from '../components/SurprisePicker.jsx'
 import { TagChips } from '../components/Tags.jsx'
 import { formatCost } from '../dates.js'
 import { SEASON_EMOJI, useIdeas } from '../ideas.js'
@@ -17,6 +18,7 @@ export default function Ideas() {
           <h1 className="font-display text-3xl italic text-rose-600">{t(archived ? 'ideas.archiveTitle' : 'ideas.title')}</h1>
           <Link to={archived ? '/ideas' : '/ideas?archived=true'} className="text-sm text-rose-500 underline">{t(archived ? 'ideas.showOpen' : 'ideas.showArchive')}</Link>
         </div>
+        {!archived && <div className="flex gap-2"><SurprisePicker /><Link to="/calendar" className="self-start rounded-full bg-white px-4 py-2 text-sm font-bold shadow-sm">📅 {t('calendar.title')}</Link></div>}
         {!isLoading && ideas.length === 0 && <p className="py-10 text-center text-sm">{t('ideas.empty')}</p>}
         {ideas.map((i) => (
           <Link key={i.id} to={`/ideas/${i.id}`} className="rounded-2xl bg-white p-4 shadow-sm active:scale-[0.99]">
