@@ -13,6 +13,7 @@ import DateDetail from './pages/DateDetail.jsx'
 import DateForm from './pages/DateForm.jsx'
 import Dates from './pages/Dates.jsx'
 import MapPage from './pages/Map.jsx'
+import Trash from './pages/Trash.jsx'
 import Join from './pages/Join.jsx'
 import Space from './pages/Space.jsx'
 import './index.css'
@@ -31,6 +32,7 @@ createRoot(document.getElementById('root')).render(
           <Route path="/space" element={<RequireAuth><Space /></RequireAuth>} />
           <Route path="/dates" element={<RequireAuth><Dates /></RequireAuth>} />
           <Route path="/map" element={<RequireAuth><MapPage /></RequireAuth>} />
+          <Route path="/trash" element={<RequireAuth><Trash /></RequireAuth>} />
           <Route path="/dates/new" element={<RequireAuth><DateForm /></RequireAuth>} />
           <Route path="/dates/:id" element={<RequireAuth><DateDetail /></RequireAuth>} />
           <Route path="/dates/:id/edit" element={<RequireAuth><DateForm /></RequireAuth>} />

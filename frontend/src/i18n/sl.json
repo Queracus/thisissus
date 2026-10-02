@@ -90,6 +90,9 @@
       "too_large": "Datoteka je prevelika (fotke max 25 MB, video max 50 MB).",
       "unsupported_type": "Ta vrsta datoteke ni podprta.",
       "not_found": "Fotke ni."
+    },
+    "trash": {
+      "not_found": "Tega ni v košu."
     }
   },
   "nav": {
@@ -98,7 +101,8 @@
     "settings": "Nastavitve",
     "admin": "Admin",
     "dates": "Zmenki",
-    "map": "Zemljevid"
+    "map": "Zemljevid",
+    "trash": "Koš"
   },
   "space": {
     "none": "Še nisi v nobenem prostoru. Prosi nekoga za povabilo.",
@@ -196,5 +200,23 @@
     "to": "Do",
     "clear": "Počisti filtre",
     "noMatch": "Noben zmenek ne ustreza filtrom."
+  },
+  "trash": {
+    "title": "Koš",
+    "info": "Izbrisano ostane tu 30 dni, potem izgine za vedno.",
+    "empty": "Koš je prazen.",
+    "restore": "Obnovi",
+    "purge": "Izbriši za vedno",
+    "confirmPurge": "Za vedno izbrišem? Tega ni mogoče razveljaviti.",
+    "type": {
+      "date": "Zmenek",
+      "photo": "Fotka iz"
+    },
+    "daysLeft": {
+      "one": "še {count} dan",
+      "two": "še {count} dneva",
+      "few": "še {count} dnevi",
+      "other": "še {count} dni"
+    }
   }
 }

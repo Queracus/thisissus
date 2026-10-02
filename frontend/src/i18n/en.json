@@ -88,6 +88,9 @@
       "too_large": "File is too large (photos max 25 MB, videos max 50 MB).",
       "unsupported_type": "This file type isn't supported.",
       "not_found": "Photo not found."
+    },
+    "trash": {
+      "not_found": "Not in the trash."
     }
   },
   "nav": {
@@ -96,7 +99,8 @@
     "settings": "Settings",
     "admin": "Admin",
     "dates": "Dates",
-    "map": "Map"
+    "map": "Map",
+    "trash": "Trash"
   },
   "space": {
     "none": "You're not in any space yet. Ask someone for an invite.",
@@ -192,5 +196,21 @@
     "to": "To",
     "clear": "Clear filters",
     "noMatch": "No dates match these filters."
+  },
+  "trash": {
+    "title": "Trash",
+    "info": "Deleted things stay here for 30 days, then they're gone for good.",
+    "empty": "Trash is empty.",
+    "restore": "Restore",
+    "purge": "Delete forever",
+    "confirmPurge": "Delete forever? This can't be undone.",
+    "type": {
+      "date": "Date",
+      "photo": "Photo from"
+    },
+    "daysLeft": {
+      "one": "{count} day left",
+      "other": "{count} days left"
+    }
   }
 }

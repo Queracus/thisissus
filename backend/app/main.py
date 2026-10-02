@@ -9,7 +9,7 @@ from app import config
 from app.db import init_conn
 from app.errors import ApiError, api_error_handler, validation_error_handler
 from app.migrator import migrate
-from app.routers import admin, auth, dates, health, me, media, photos, spaces, tags
+from app.routers import admin, auth, dates, health, me, media, photos, spaces, tags, trash
 
 
 @asynccontextmanager
@@ -36,5 +36,5 @@ async def reject_foreign_origin(request: Request, call_next):
 
 
 # Every router must be listed here, otherwise it is never mounted.
-for r in (health, auth, me, admin, spaces, dates, tags, photos, media):
+for r in (health, auth, me, admin, spaces, dates, tags, photos, media, trash):
     app.include_router(r.router, prefix="/api")
