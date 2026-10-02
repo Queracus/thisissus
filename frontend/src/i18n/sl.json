@@ -460,5 +460,9 @@
       "1d": "1 dan",
       "1w": "1 teden"
     }
+  },
+  "copy": {
+    "into": "Kopiraj v moj prostor:",
+    "button": "Kopiraj"
   }
 }

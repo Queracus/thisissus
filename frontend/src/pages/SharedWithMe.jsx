@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { Link, useParams } from 'react-router-dom'
 import { api } from '../api.js'
+import CopyRecipe from '../components/CopyRecipe.jsx'
 import { mediaUrl } from '../components/Photos.jsx'
 import { Hearts } from '../components/Reviews.jsx'
 import { TagChips } from '../components/Tags.jsx'
@@ -83,6 +84,7 @@ export function SharedItem() {
     <main className="min-h-[85vh] bg-rose-50 p-4 font-sans text-rose-900">
       {error && <p className="text-center text-sm text-red-600">{tError(error)}</p>}
       {data && <SharedBody item={data} />}
+      {data?.type === 'recipe' && <div className="mx-auto mt-3 max-w-md"><CopyRecipe recipeId={data.id} /></div>}
     </main>
   )
 }

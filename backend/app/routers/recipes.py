@@ -13,7 +13,8 @@ from app.errors import ApiError
 from app.jobs import enqueue
 from app.media import store
 from app.notify import notify_space
-from app.policy import active_space, scope_sql
+from app.policy import active_space, require_member, scope_sql, space_role
+from app.sharing import user_grant
 from app.recipes_tools import scale
 from app.routers.dates import TagOut
 from app.routers.photos import gallery, gallery_router
@@ -236,6 +237,59 @@ async def cooked(recipe_id: int, body: CookedIn, user=Depends(current_user), con
         await notify_space(conn, user["id"], recipe["space_id"], "recipe.cooked",
                            {"recipe_id": recipe_id, "title": recipe["title"], "date_id": date_id})
     return {"recipe": await full_recipe(conn, user["id"], recipe_id), "date_id": date_id}
+
+
+class CopyIn(BaseModel):
+    target_space_id: int
+
+
+async def _copy_media_without_metadata(conn: asyncpg.Connection, media_id: int, space_id: int, user_id: int) -> int | None:
+    """New media in space_id whose 'original' is the source's display WebP (already EXIF/GPS-free), plus its derivatives."""
+    display = await conn.fetchval("SELECT id FROM media WHERE parent_id = $1 AND variant = 'display' AND status = 'ready'", media_id)
+    if not display:
+        return None
+    new_ids = {}
+    for variant, source in [("original", display)] + [(r["variant"], r["id"]) for r in await conn.fetch(
+            "SELECT id, variant FROM media WHERE parent_id = $1 AND status = 'ready'", media_id)]:
+        new_ids[variant] = await conn.fetchval(
+            """INSERT INTO media (space_id, parent_id, kind, variant, mime, size, chunk_size, sha256, width, height, duration_s, status, created_by)
+               SELECT $2, $3, kind, $4, mime, size, chunk_size, sha256, width, height, duration_s, 'ready', $5 FROM media WHERE id = $1 RETURNING id""",
+            source, space_id, new_ids.get("original"), variant, user_id)
+        await conn.execute("INSERT INTO media_chunks (media_id, seq, data) SELECT $1, seq, data FROM media_chunks WHERE media_id = $2",
+                           new_ids[variant], source)
+    return new_ids["original"]
+
+
+@router.post("/{recipe_id}/copy")
+async def copy_recipe(recipe_id: int, body: CopyIn, user=Depends(current_user), conn: asyncpg.Connection = Depends(get_conn)):
+    """Deep copy into one of my spaces (from my own space or a recipe shared with me). The copy is fully independent."""
+    source_space = await conn.fetchval("SELECT space_id FROM recipes WHERE id = $1 AND deleted_at IS NULL", recipe_id)
+    can_read = source_space is not None and (await space_role(conn, user["id"], source_space) is not None
+                                             or await user_grant(conn, user["id"], "recipe", recipe_id) is not None)
+    if not can_read:
+        raise ApiError(404, "recipe.not_found")
+    await require_member(conn, user["id"], body.target_space_id, "write")
+    async with conn.transaction():
+        new_id = await conn.fetchval(
+            """INSERT INTO recipes (space_id, title, portions, prep_minutes, source_url, status, created_by)
+               SELECT $2, title, portions, prep_minutes, source_url, 'want', $3 FROM recipes WHERE id = $1 RETURNING id""",
+            recipe_id, body.target_space_id, user["id"])
+        await conn.execute("INSERT INTO recipe_ingredients SELECT $2, position, amount, unit, item FROM recipe_ingredients WHERE recipe_id = $1", recipe_id, new_id)
+        await conn.execute("INSERT INTO recipe_steps SELECT $2, position, text FROM recipe_steps WHERE recipe_id = $1", recipe_id, new_id)
+        for tag in await conn.fetch("SELECT t.name, t.starter_key FROM recipe_tags rt JOIN tags t ON t.id = rt.tag_id WHERE rt.recipe_id = $1", recipe_id):
+            tag_id = await conn.fetchval(  # same starter tag or same name in the target space, else a new custom tag
+                """SELECT id FROM tags WHERE space_id = $1 AND (starter_key = $2 OR lower(name) = lower($3)) ORDER BY starter_key IS NULL LIMIT 1""",
+                body.target_space_id, tag["starter_key"], tag["name"]) or await conn.fetchval(
+                "INSERT INTO tags (space_id, name) VALUES ($1, $2) RETURNING id", body.target_space_id, tag["name"])
+            await conn.execute("INSERT INTO recipe_tags (recipe_id, tag_id) VALUES ($1, $2) ON CONFLICT DO NOTHING", new_id, tag_id)
+        for photo in await conn.fetch(
+                """SELECT j.media_id, j.caption, j.position FROM recipe_media j JOIN media m ON m.id = j.media_id
+                   WHERE j.recipe_id = $1 AND m.deleted_at IS NULL ORDER BY j.position""", recipe_id):
+            copied = await _copy_media_without_metadata(conn, photo["media_id"], body.target_space_id, user["id"])
+            if copied:
+                await conn.execute("INSERT INTO recipe_media (recipe_id, media_id, caption, position) VALUES ($1, $2, $3, $4)",
+                                   new_id, copied, photo["caption"], photo["position"])
+    return {"id": new_id}
 
 
 photo_router = gallery_router("/recipes", "recipe_media", "recipe_id", visible_recipe)
