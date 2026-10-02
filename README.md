@@ -46,6 +46,7 @@ Passkeys are bound to `RP_ID`/`ORIGIN` from `.env`, so ones made on `localhost` 
 
 ```bash
 cd backend && .venv/Scripts/python -m pytest
+cd frontend && npm test
 ```
 Tests drop and recreate `thisissus_test`, build it with the real migrations, and roll back each test's transaction.
 

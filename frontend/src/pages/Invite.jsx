@@ -3,9 +3,12 @@ import { useQueryClient } from '@tanstack/react-query'
 import { useNavigate, useParams } from 'react-router-dom'
 import { registerPasskey } from '../auth.js'
 import Screen, { Button } from '../components/Screen.jsx'
+import { useT } from '../i18n/index.jsx'
 
+// Invite (new user) and recovery (new passkey for an existing user) share this page.
 export default function Invite({ recovery = false }) {
   const { token } = useParams()
+  const { t, tError } = useT()
   const qc = useQueryClient()
   const navigate = useNavigate()
   const [error, setError] = useState(null)
@@ -18,17 +21,17 @@ export default function Invite({ recovery = false }) {
       qc.setQueryData(['me'], await registerPasskey(token))
       navigate('/', { replace: true })
     } catch (e) {
-      setError(e.code || e.name)
+      setError(tError(e))
     } finally {
       setBusy(false)
     }
   }
 
   return (
-    <Screen title="Dobrodošla 💌">
-      <p>Ustvari passkey (Face ID / prstni odtis) za prijavo.</p>
-      <Button onClick={onRegister} disabled={busy}>Ustvari passkey</Button>
-      {error && <p className="text-sm text-red-600">Ni uspelo ({error})</p>}
+    <Screen title={t(recovery ? 'invite.newPasskey' : 'invite.welcome')}>
+      <p>{t(recovery ? 'invite.recoveryText' : 'invite.welcomeText')}</p>
+      <Button onClick={onRegister} disabled={busy}>{t('invite.create')}</Button>
+      {error && <p className="text-sm text-red-600">{error}</p>}
     </Screen>
   )
 }

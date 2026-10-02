@@ -33,7 +33,7 @@ class PinLoginIn(BaseModel):
 
 
 async def me_out(conn: asyncpg.Connection, user: asyncpg.Record) -> dict:
-    return {"id": user["id"], "display_name": user["display_name"], "username": user["username"],
+    return {"id": user["id"], "display_name": user["display_name"], "username": user["username"], "locale": user["locale"],
             "permissions": await user_permissions(conn, user["id"])}
 
 

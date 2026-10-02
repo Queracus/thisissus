@@ -1,0 +1,53 @@
+{
+  "app": { "title": "Thisissus 💌" },
+  "common": { "back": "Nazaj", "copyHint": "(klikni za kopiranje, velja {valid})", "days7": "7 dni", "hours24": "24 ur" },
+  "home": { "hello": "Živjo, {name}!", "settings": "Nastavitve", "admin": "Admin", "logout": "Odjava" },
+  "login": {
+    "passkey": "Prijava s passkey",
+    "usePin": "Uporabi PIN",
+    "username": "Uporabniško ime",
+    "pin": "PIN",
+    "pinSubmit": "Prijava s PIN",
+    "backToPasskey": "Nazaj na passkey"
+  },
+  "invite": {
+    "welcome": "Dobrodošli 💌",
+    "newPasskey": "Nov passkey 🔑",
+    "welcomeText": "Ustvari passkey (Face ID / prstni odtis) za prijavo.",
+    "recoveryText": "Ustvari nov passkey za to napravo.",
+    "create": "Ustvari passkey"
+  },
+  "settings": {
+    "title": "Nastavitve",
+    "pinInfo": "PIN je rezervna prijava, če passkey ni na voljo.",
+    "pinPlaceholder": "6-mestni PIN",
+    "savePin": "Shrani PIN",
+    "pinSaved": "PIN shranjen ✓",
+    "language": "Jezik"
+  },
+  "devices": { "title": "Naprave", "unknown": "Neznana naprava", "current": "ta naprava", "revoke": "Odjavi", "revokeOthers": "Odjavi vse ostale" },
+  "admin": {
+    "title": "Admin",
+    "newUserName": "Ime novega uporabnika",
+    "createInvite": "Ustvari povabilo",
+    "hasPasskey": "passkey ✓",
+    "noPasskey": "brez passkey",
+    "recoveryLink": "Povezava za obnovo",
+    "unlockPin": "Odkleni PIN",
+    "users": { "one": "{count} uporabnik", "two": "{count} uporabnika", "few": "{count} uporabniki", "other": "{count} uporabnikov" }
+  },
+  "error": {
+    "generic": "Ni uspelo ({code})",
+    "auth": {
+      "pin_locked": "Preveč napak. Poskusi čez {minutes} min.",
+      "pin_invalid": "Napačno ime ali PIN.",
+      "invalid_token": "Povezava je neveljavna ali je potekla.",
+      "username_taken": "Ime je že zasedeno.",
+      "passkey_invalid": "Passkey ni veljaven.",
+      "passkey_unknown": "Tega passkey-ja ne poznamo.",
+      "forbidden": "Za to nimaš pravic."
+    },
+    "admin": { "last_admin": "Vsaj en admin mora ostati." },
+    "validation": { "invalid": "Preveri vnos: ime 3–30 znakov, PIN 6 številk." }
+  }
+}

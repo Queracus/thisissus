@@ -1,3 +1,5 @@
+from typing import Literal
+
 import asyncpg
 from fastapi import APIRouter, Depends, Request
 from pydantic import BaseModel, Field
@@ -42,4 +44,14 @@ async def revoke_session(session_id: int, user: asyncpg.Record = Depends(current
 @router.post("/sessions/revoke-others")
 async def revoke_other_sessions(request: Request, user: asyncpg.Record = Depends(current_user), conn: asyncpg.Connection = Depends(get_conn)):
     await conn.execute("DELETE FROM sessions WHERE user_id = $1 AND token_hash <> $2", user["id"], hash_token(request.cookies.get(COOKIE, "")))
+    return {"ok": True}
+
+
+class LocaleIn(BaseModel):
+    locale: Literal["sl", "en"]
+
+
+@router.put("/locale")
+async def put_locale(body: LocaleIn, user: asyncpg.Record = Depends(current_user), conn: asyncpg.Connection = Depends(get_conn)):
+    await conn.execute("UPDATE users SET locale = $2 WHERE id = $1", user["id"], body.locale)
     return {"ok": True}
