@@ -12,10 +12,17 @@ from app.migrator import migrate
 async def test_db():
     """Fresh test database for the whole session, built by the real migrations."""
     admin = await asyncpg.connect(config.dsn("postgres"))
-    await admin.execute(f'DROP DATABASE IF EXISTS "{config.TEST_DB_NAME}" WITH (FORCE)')
-    await admin.execute(f'CREATE DATABASE "{config.TEST_DB_NAME}"')
-    await admin.close()
+    try:
+        await admin.execute(f'DROP DATABASE IF EXISTS "{config.TEST_DB_NAME}" WITH (FORCE)')
+        await admin.execute(f'CREATE DATABASE "{config.TEST_DB_NAME}"')
+        reset_schema = False
+    except (asyncpg.InsufficientPrivilegeError, asyncpg.ObjectInUseError):
+        reset_schema = True  # e.g. pgAdmin (superuser) is looking at the test DB: wipe its schema instead
+    finally:
+        await admin.close()
     conn = await asyncpg.connect(config.dsn(config.TEST_DB_NAME))
+    if reset_schema:
+        await conn.execute("DROP SCHEMA public CASCADE; CREATE SCHEMA public")
     await init_conn(conn)
     await migrate(conn, config.MIGRATIONS_DIR)
     yield conn

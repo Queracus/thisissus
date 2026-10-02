@@ -42,13 +42,16 @@ async def _finish(conn, media_id: int, size: int, digest: bytes) -> None:
 
 
 async def save_upload(conn: asyncpg.Connection, space_id: int, user_id: int, file: UploadFile,
-                      allowed: dict[str, str], max_bytes: int) -> tuple[int, str]:
-    """Stream an upload into chunks. `allowed` maps sniffed mime → kind. Returns (media_id, kind). Call inside a transaction."""
+                      allowed: dict[str, str]) -> tuple[int, str]:
+    """Stream an upload into chunks. `allowed` maps sniffed mime → kind (photo|video). Returns (media_id, kind).
+    Call inside a transaction: a rejected upload rolls back every chunk written so far."""
     first = await file.read(CHUNK_SIZE)
     mime = sniff(first[:16])
     if mime not in allowed:
         raise ApiError(415, "media.unsupported_type")
-    media_id = await _new_media(conn, space_id, user_id, allowed[mime], "original", mime, status="pending")
+    kind = allowed[mime]
+    max_bytes = VIDEO_MAX_BYTES if kind == "video" else PHOTO_MAX_BYTES
+    media_id = await _new_media(conn, space_id, user_id, kind, "original", mime, status="pending")
     sha, size, seq, chunk = hashlib.sha256(), 0, 0, first
     while chunk:
         size += len(chunk)
@@ -58,7 +61,7 @@ async def save_upload(conn: asyncpg.Connection, space_id: int, user_id: int, fil
         await conn.execute("INSERT INTO media_chunks (media_id, seq, data) VALUES ($1, $2, $3)", media_id, seq, chunk)
         seq, chunk = seq + 1, await file.read(CHUNK_SIZE)
     await _finish(conn, media_id, size, sha.digest())
-    return media_id, allowed[mime]
+    return media_id, kind
 
 
 async def save_bytes(conn: asyncpg.Connection, space_id: int, user_id: int | None, kind: str, variant: str, mime: str,

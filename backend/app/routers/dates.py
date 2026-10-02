@@ -55,6 +55,7 @@ class PhotoOut(BaseModel):
     status: str
     width: int | None
     height: int | None
+    duration_s: float | None
     caption: str | None
     position: int
 

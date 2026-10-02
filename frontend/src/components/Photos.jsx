@@ -49,7 +49,7 @@ function Uploader({ dateId }) {
     <div className="flex flex-col gap-2">
       <label className="cursor-pointer self-start rounded-full bg-rose-500 px-4 py-2 text-sm font-bold text-white shadow active:scale-95">
         📷 {t('photos.add')}
-        <input type="file" accept="image/*,.heic,.heif" multiple className="hidden" onChange={onPick} />
+        <input type="file" accept="image/*,video/*,.heic,.heif,.mov" multiple className="hidden" onChange={onPick} />
       </label>
       {items.map((i) => (
         <div key={i.key} className="text-xs">
@@ -80,9 +80,10 @@ function Lightbox({ dateId, photos, index, onClose }) {
   return (
     <div className="fixed inset-0 z-20 flex flex-col bg-black/90 p-4 text-white" onClick={onClose}>
       <div className="flex flex-1 items-center justify-center" onClick={(e) => e.stopPropagation()}>
-        {photo.status === 'ready'
-          ? <img src={mediaUrl(photo.id, 'display')} alt={photo.caption ?? ''} className="max-h-[70vh] max-w-full rounded-lg object-contain" />
-          : <p>{t('photos.processing')}</p>}
+        {photo.status !== 'ready' ? <p>{t('photos.processing')}</p>
+          : photo.kind === 'video'
+            ? <video src={mediaUrl(photo.id, 'mp4')} poster={mediaUrl(photo.id, 'poster')} controls playsInline className="max-h-[70vh] max-w-full rounded-lg" />
+            : <img src={mediaUrl(photo.id, 'display')} alt={photo.caption ?? ''} className="max-h-[70vh] max-w-full rounded-lg object-contain" />}
       </div>
       <div className="flex flex-col gap-2" onClick={(e) => e.stopPropagation()}>
         <input value={caption} onChange={(e) => setCaption(e.target.value)} placeholder={t('photos.caption')}
@@ -111,10 +112,15 @@ export default function Photos({ date }) {
       <Uploader dateId={date.id} />
       <div className="grid grid-cols-3 gap-1">
         {date.photos.map((p, i) => (
-          <button key={p.id} onClick={() => setOpen(i)} className="aspect-square overflow-hidden rounded-lg bg-rose-100">
+          <button key={p.id} onClick={() => setOpen(i)} className="relative aspect-square overflow-hidden rounded-lg bg-rose-100">
             {p.status === 'ready'
               ? <img src={mediaUrl(p.id, 'thumb')} alt={p.caption ?? ''} loading="lazy" className="h-full w-full object-cover" />
               : <span className="text-xs text-rose-400">{t(p.status === 'failed' ? 'photos.failed' : 'photos.processing')}</span>}
+            {p.kind === 'video' && (
+              <span className="absolute bottom-1 right-1 rounded bg-black/60 px-1 text-xs text-white">
+                ▶ {p.duration_s ? `${Math.floor(p.duration_s / 60)}:${String(Math.round(p.duration_s % 60)).padStart(2, '0')}` : ''}
+              </span>
+            )}
           </button>
         ))}
       </div>

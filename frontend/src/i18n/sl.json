@@ -87,7 +87,7 @@
       "invalid": "Neveljavna oznaka."
     },
     "media": {
-      "too_large": "Datoteka je prevelika (max 25 MB).",
+      "too_large": "Datoteka je prevelika (fotke max 25 MB, video max 50 MB).",
       "unsupported_type": "Ta vrsta datoteke ni podprta.",
       "not_found": "Fotke ni."
     }
@@ -167,7 +167,7 @@
     }
   },
   "photos": {
-    "add": "Dodaj fotke",
+    "add": "Dodaj fotke / video",
     "processing": "obdelujem ...",
     "failed": "napaka",
     "caption": "Opis",

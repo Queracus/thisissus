@@ -11,7 +11,8 @@ from app.media import store
 from app.routers.dates import visible_date
 
 router = APIRouter(prefix="/dates")
-PHOTO_TYPES = {"image/jpeg": "photo", "image/png": "photo", "image/webp": "photo", "image/heic": "photo"}
+MEDIA_TYPES = {"image/jpeg": "photo", "image/png": "photo", "image/webp": "photo", "image/heic": "photo",
+               "video/mp4": "video", "video/quicktime": "video"}
 
 
 class CaptionIn(BaseModel):
@@ -24,7 +25,7 @@ class OrderIn(BaseModel):
 
 async def date_photos(conn: asyncpg.Connection, date_id: int) -> list[dict]:
     rows = await conn.fetch(
-        """SELECT m.id, m.kind, m.status, m.width, m.height, dm.caption, dm.position
+        """SELECT m.id, m.kind, m.status, m.width, m.height, m.duration_s, dm.caption, dm.position
            FROM date_media dm JOIN media m ON m.id = dm.media_id
            WHERE dm.date_id = $1 AND m.deleted_at IS NULL ORDER BY dm.position, m.id""", date_id)
     return [dict(r) for r in rows]
@@ -40,7 +41,7 @@ async def _attached(conn: asyncpg.Connection, date_id: int, media_id: int) -> No
 async def upload_photo(date_id: int, file: UploadFile, user: asyncpg.Record = Depends(current_user), conn: asyncpg.Connection = Depends(get_conn)):
     date = await visible_date(conn, user["id"], date_id)
     async with conn.transaction():
-        media_id, kind = await store.save_upload(conn, date["space_id"], user["id"], file, PHOTO_TYPES, store.PHOTO_MAX_BYTES)
+        media_id, kind = await store.save_upload(conn, date["space_id"], user["id"], file, MEDIA_TYPES)
         await conn.execute(
             "INSERT INTO date_media (date_id, media_id, position) SELECT $1, $2, coalesce(max(position) + 1, 0) FROM date_media WHERE date_id = $1",
             date_id, media_id)
