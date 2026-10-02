@@ -105,6 +105,9 @@
       "already_answered": "You already answered.",
       "not_proposer": "Only the proposer can cancel.",
       "not_participant": "You're not invited."
+    },
+    "recipe": {
+      "not_found": "Recipe not found."
     }
   },
   "nav": {
@@ -115,7 +118,8 @@
     "dates": "Dates",
     "map": "Map",
     "trash": "Trash",
-    "ideas": "Ideas"
+    "ideas": "Ideas",
+    "recipes": "Recipes"
   },
   "space": {
     "none": "You're not in any space yet. Ask someone for an invite.",
@@ -222,7 +226,8 @@
     "type": {
       "date": "Date",
       "photo": "Photo from",
-      "idea": "Idea"
+      "idea": "Idea",
+      "recipe": "Recipe"
     },
     "daysLeft": {
       "one": "{count} day left",
@@ -350,5 +355,34 @@
     "unsupported": "This browser doesn't support notifications.",
     "denied": "Notifications are blocked in the browser settings.",
     "failed": "Couldn't turn on notifications."
+  },
+  "recipes": {
+    "title": "Recipes",
+    "new": "New recipe",
+    "edit": "Edit recipe",
+    "save": "Save recipe",
+    "empty": "No recipes yet. Add one with +.",
+    "ingredients": "Ingredients",
+    "steps": "Steps",
+    "addIngredient": "ingredient",
+    "addStep": "step",
+    "confirmDelete": "Delete this recipe? (it stays in the trash for 30 days)",
+    "status": {
+      "want": "Want to try",
+      "cooked": "Cooked"
+    },
+    "portions": {
+      "one": "{count} portion",
+      "other": "{count} portions"
+    },
+    "field": {
+      "title": "Recipe name",
+      "portions": "Portions",
+      "prep_minutes": "Time (min)",
+      "source_url": "Source (link)",
+      "amount": "qty",
+      "unit": "unit",
+      "item": "ingredient"
+    }
   }
 }

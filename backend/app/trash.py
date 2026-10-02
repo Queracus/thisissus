@@ -13,6 +13,11 @@ async def _purge_date(conn: asyncpg.Connection, date_id: int) -> None:
     await conn.execute("DELETE FROM dates WHERE id = $1", date_id)
 
 
+async def _purge_recipe(conn: asyncpg.Connection, recipe_id: int) -> None:
+    await conn.execute("DELETE FROM media WHERE id IN (SELECT media_id FROM recipe_media WHERE recipe_id = $1)", recipe_id)
+    await conn.execute("DELETE FROM recipes WHERE id = $1", recipe_id)
+
+
 async def _purge_media(conn: asyncpg.Connection, media_id: int) -> None:
     await conn.execute("DELETE FROM media WHERE id = $1", media_id)
 
@@ -25,6 +30,13 @@ TYPES = {
         "expired": "SELECT id FROM ideas WHERE deleted_at < now() - make_interval(days => $1)",
         "purge": lambda conn, idea_id: conn.execute("DELETE FROM ideas WHERE id = $1", idea_id),
     },
+    "recipe": {
+        "list": "SELECT 'recipe' AS type, id, title AS label, deleted_at FROM recipes WHERE space_id = $1 AND deleted_at IS NOT NULL",
+        "space": "SELECT space_id FROM recipes WHERE id = $1 AND deleted_at IS NOT NULL",
+        "restore": "UPDATE recipes SET deleted_at = NULL WHERE id = $1",
+        "expired": "SELECT id FROM recipes WHERE deleted_at < now() - make_interval(days => $1)",
+        "purge": _purge_recipe,
+    },
     "date": {
         "list": "SELECT 'date' AS type, id, title AS label, deleted_at FROM dates WHERE space_id = $1 AND deleted_at IS NOT NULL",
         "space": "SELECT space_id FROM dates WHERE id = $1 AND deleted_at IS NOT NULL",
@@ -32,10 +44,12 @@ TYPES = {
         "expired": "SELECT id FROM dates WHERE deleted_at < now() - make_interval(days => $1)",
         "purge": _purge_date,
     },
-    "photo": {  # photos/videos removed from a date that itself still exists
-        "list": """SELECT 'photo' AS type, m.id, d.title AS label, m.deleted_at FROM media m
-                   JOIN date_media dm ON dm.media_id = m.id JOIN dates d ON d.id = dm.date_id
-                   WHERE m.space_id = $1 AND m.variant = 'original' AND m.deleted_at IS NOT NULL AND d.deleted_at IS NULL""",
+    "photo": {  # photos/videos removed from a date or recipe that itself still exists
+        "list": """SELECT 'photo' AS type, m.id, coalesce(d.title, r.title) AS label, m.deleted_at FROM media m
+                   LEFT JOIN date_media dm ON dm.media_id = m.id LEFT JOIN dates d ON d.id = dm.date_id
+                   LEFT JOIN recipe_media rm ON rm.media_id = m.id LEFT JOIN recipes r ON r.id = rm.recipe_id
+                   WHERE m.space_id = $1 AND m.variant = 'original' AND m.deleted_at IS NOT NULL
+                     AND coalesce(d.deleted_at, r.deleted_at) IS NULL AND (d.id IS NOT NULL OR r.id IS NOT NULL)""",
         "space": "SELECT space_id FROM media WHERE id = $1 AND variant = 'original' AND deleted_at IS NOT NULL",
         "restore": "UPDATE media SET deleted_at = NULL WHERE id = $1",
         "expired": "SELECT id FROM media WHERE variant = 'original' AND deleted_at < now() - make_interval(days => $1)",

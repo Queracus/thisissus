@@ -24,6 +24,7 @@ export default function Header() {
         <NavLink to="/" end className={link}>{t('nav.home')}</NavLink>
         {active && <NavLink to="/ideas" className={link}>{t('nav.ideas')}</NavLink>}
         {active && <NavLink to="/dates" className={link}>{t('nav.dates')}</NavLink>}
+        {active && <NavLink to="/recipes" className={link}>{t('nav.recipes')}</NavLink>}
         {active && <NavLink to="/map" className={link}>{t('nav.map')}</NavLink>}
         {active && <NavLink to="/space" className={link}>{t('nav.space')}</NavLink>}
         {active && <NavLink to="/trash" className={link}>{t('nav.trash')}</NavLink>}

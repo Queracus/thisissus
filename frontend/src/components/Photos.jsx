@@ -6,10 +6,10 @@ import { useT } from '../i18n/index.jsx'
 export const mediaUrl = (id, variant) => `/api/media/${id}/${variant}`
 
 // XHR instead of fetch: fetch cannot report upload progress.
-function uploadFile(dateId, file, onProgress) {
+function uploadFile(base, file, onProgress) {
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest()
-    xhr.open('POST', `/api/dates/${dateId}/photos`)
+    xhr.open('POST', `/api${base}/photos`)
     xhr.withCredentials = true
     xhr.upload.onprogress = (e) => e.lengthComputable && onProgress(e.loaded / e.total)
     xhr.onload = () => {
@@ -23,7 +23,7 @@ function uploadFile(dateId, file, onProgress) {
   })
 }
 
-function Uploader({ dateId }) {
+function Uploader({ base, queryKey }) {
   const { t, tError } = useT()
   const qc = useQueryClient()
   const [items, setItems] = useState([])
@@ -36,9 +36,9 @@ function Uploader({ dateId }) {
     setItems((cur) => [...cur, ...batch])
     for (const item of batch) {
       try {
-        await uploadFile(dateId, item.file, (p) => update(item.key, { progress: p }))
+        await uploadFile(base, item.file, (p) => update(item.key, { progress: p }))
         setItems((cur) => cur.filter((i) => i.key !== item.key))
-        qc.invalidateQueries({ queryKey: ['date', String(dateId)] })
+        qc.invalidateQueries({ queryKey })
       } catch (err) {
         update(item.key, { error: tError(err) })
       }
@@ -61,12 +61,12 @@ function Uploader({ dateId }) {
   )
 }
 
-function Lightbox({ dateId, photos, index, onClose }) {
+function Lightbox({ base, queryKey, photos, index, onClose }) {
   const { t } = useT()
   const qc = useQueryClient()
   const photo = photos[index]
   const [caption, setCaption] = useState(photo.caption ?? '')
-  const refresh = () => qc.invalidateQueries({ queryKey: ['date', String(dateId)] })
+  const refresh = () => qc.invalidateQueries({ queryKey })
   const send = (method, path, body) => api(path, { method, body: JSON.stringify(body ?? {}) }).then(refresh)
 
   const move = (delta) => {
@@ -74,7 +74,7 @@ function Lightbox({ dateId, photos, index, onClose }) {
     const j = index + delta
     if (j < 0 || j >= ids.length) return
     ;[ids[index], ids[j]] = [ids[j], ids[index]]
-    send('PUT', `/dates/${dateId}/photos/order`, { media_ids: ids }).then(onClose)
+    send('PUT', `${base}/photos/order`, { media_ids: ids }).then(onClose)
   }
 
   return (
@@ -87,12 +87,12 @@ function Lightbox({ dateId, photos, index, onClose }) {
       </div>
       <div className="flex flex-col gap-2" onClick={(e) => e.stopPropagation()}>
         <input value={caption} onChange={(e) => setCaption(e.target.value)} placeholder={t('photos.caption')}
-          onBlur={() => caption !== (photo.caption ?? '') && send('PATCH', `/dates/${dateId}/photos/${photo.id}`, { caption: caption || null })}
+          onBlur={() => caption !== (photo.caption ?? '') && send('PATCH', `${base}/photos/${photo.id}`, { caption: caption || null })}
           className="rounded-xl bg-white/10 px-3 py-2 text-white placeholder-white/50" />
         <div className="flex justify-between text-sm">
           <button onClick={() => move(-1)} disabled={index === 0}>← {t('photos.moveLeft')}</button>
           <a href={mediaUrl(photo.id, 'original')} target="_blank" rel="noreferrer" className="underline">{t('photos.original')}</a>
-          <button onClick={() => confirm(t('photos.confirmDelete')) && send('DELETE', `/dates/${dateId}/photos/${photo.id}`).then(onClose)} className="text-red-300">
+          <button onClick={() => confirm(t('photos.confirmDelete')) && send('DELETE', `${base}/photos/${photo.id}`).then(onClose)} className="text-red-300">
             {t('photos.delete')}
           </button>
           <button onClick={() => move(1)} disabled={index === photos.length - 1}>{t('photos.moveRight')} →</button>
@@ -103,15 +103,16 @@ function Lightbox({ dateId, photos, index, onClose }) {
   )
 }
 
-export default function Photos({ date }) {
+// Gallery for any owner: base = '/dates/7' or '/recipes/3'; queryKey = the owner's detail query to refresh.
+export default function Photos({ base, queryKey, photos }) {
   const { t } = useT()
   const [open, setOpen] = useState(null)
 
   return (
     <section className="flex flex-col gap-3">
-      <Uploader dateId={date.id} />
+      <Uploader base={base} queryKey={queryKey} />
       <div className="grid grid-cols-3 gap-1">
-        {date.photos.map((p, i) => (
+        {photos.map((p, i) => (
           <button key={p.id} onClick={() => setOpen(i)} className="relative aspect-square overflow-hidden rounded-lg bg-rose-100">
             {p.status === 'ready'
               ? <img src={mediaUrl(p.id, 'thumb')} alt={p.caption ?? ''} loading="lazy" className="h-full w-full object-cover" />
@@ -124,7 +125,7 @@ export default function Photos({ date }) {
           </button>
         ))}
       </div>
-      {open != null && date.photos[open] && <Lightbox key={date.photos[open].id} dateId={date.id} photos={date.photos} index={open} onClose={() => setOpen(null)} />}
+      {open != null && photos[open] && <Lightbox key={photos[open].id} base={base} queryKey={queryKey} photos={photos} index={open} onClose={() => setOpen(null)} />}
     </section>
   )
 }

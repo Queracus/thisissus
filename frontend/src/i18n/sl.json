@@ -107,6 +107,9 @@
       "already_answered": "Si že odgovoril/a.",
       "not_proposer": "Preklical lahko samo predlagatelj.",
       "not_participant": "Nisi povabljen/a."
+    },
+    "recipe": {
+      "not_found": "Recept ne obstaja."
     }
   },
   "nav": {
@@ -117,7 +120,8 @@
     "dates": "Zmenki",
     "map": "Zemljevid",
     "trash": "Koš",
-    "ideas": "Ideje"
+    "ideas": "Ideje",
+    "recipes": "Recepti"
   },
   "space": {
     "none": "Še nisi v nobenem prostoru. Prosi nekoga za povabilo.",
@@ -226,7 +230,8 @@
     "type": {
       "date": "Zmenek",
       "photo": "Fotka iz",
-      "idea": "Ideja"
+      "idea": "Ideja",
+      "recipe": "Recept"
     },
     "daysLeft": {
       "one": "še {count} dan",
@@ -358,5 +363,36 @@
     "unsupported": "Ta brskalnik ne podpira obvestil.",
     "denied": "Obvestila so blokirana v nastavitvah brskalnika.",
     "failed": "Vklop obvestil ni uspel."
+  },
+  "recipes": {
+    "title": "Recepti",
+    "new": "Nov recept",
+    "edit": "Uredi recept",
+    "save": "Shrani recept",
+    "empty": "Še ni receptov. Dodaj s +.",
+    "ingredients": "Sestavine",
+    "steps": "Postopek",
+    "addIngredient": "sestavina",
+    "addStep": "korak",
+    "confirmDelete": "Izbrišem ta recept? (30 dni je v košu)",
+    "status": {
+      "want": "Želiva poskusiti",
+      "cooked": "Skuhano"
+    },
+    "portions": {
+      "one": "{count} porcija",
+      "two": "{count} porciji",
+      "few": "{count} porcije",
+      "other": "{count} porcij"
+    },
+    "field": {
+      "title": "Ime recepta",
+      "portions": "Porcije",
+      "prep_minutes": "Čas (min)",
+      "source_url": "Vir (povezava)",
+      "amount": "kol.",
+      "unit": "enota",
+      "item": "sestavina"
+    }
   }
 }
