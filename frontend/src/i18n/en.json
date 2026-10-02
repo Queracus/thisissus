@@ -94,6 +94,16 @@
     },
     "idea": {
       "not_found": "Idea not found."
+    },
+    "proposal": {
+      "own_proposal": "You can't accept your own proposal.",
+      "slot_in_past": "That time has already passed.",
+      "slot_count": "Pick 1 to 3 times.",
+      "invalid_state": "Not possible right now (it changed meanwhile).",
+      "unknown_slot": "That time isn't in the proposal.",
+      "already_answered": "You already answered.",
+      "not_proposer": "Only the proposer can cancel.",
+      "not_participant": "You're not invited."
     }
   },
   "nav": {
@@ -247,6 +257,29 @@
       "url": "Link",
       "est_cost": "Estimated cost (€)",
       "season": "Best time"
+    }
+  },
+  "proposals": {
+    "propose": "Propose a time",
+    "counter": "Suggest another time",
+    "refuse": "Doesn't work for me",
+    "cancel": "Cancel proposal",
+    "change": "Change times",
+    "reschedule": "Reschedule",
+    "addSlot": "another time",
+    "send": "Send",
+    "askedBy": "{name} asks when you'd go:",
+    "waiting": "Waiting for an answer",
+    "scheduledFor": "It's a date: {when}",
+    "commentPlaceholder": "Comment ...",
+    "event": {
+      "proposed": "proposed",
+      "countered": "suggested another time",
+      "accepted": "accepted",
+      "scheduled": "confirmed 💕",
+      "refused": "says the time doesn't work",
+      "cancelled": "cancelled the proposal",
+      "comment": ""
     }
   }
 }

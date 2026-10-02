@@ -96,6 +96,16 @@
     },
     "idea": {
       "not_found": "Ideja ne obstaja."
+    },
+    "proposal": {
+      "own_proposal": "Svojega predloga ne moreš sprejeti.",
+      "slot_in_past": "Termin je že mimo.",
+      "slot_count": "Izberi 1 do 3 termine.",
+      "invalid_state": "To zdaj ni mogoče (stanje se je spremenilo).",
+      "unknown_slot": "Tega termina ni v predlogu.",
+      "already_answered": "Si že odgovoril/a.",
+      "not_proposer": "Preklical lahko samo predlagatelj.",
+      "not_participant": "Nisi povabljen/a."
     }
   },
   "nav": {
@@ -253,6 +263,29 @@
       "url": "Povezava",
       "est_cost": "Približni strošek (€)",
       "season": "Najboljši čas"
+    }
+  },
+  "proposals": {
+    "propose": "Predlagaj termin",
+    "counter": "Predlagam drug termin",
+    "refuse": "Ne ustreza mi",
+    "cancel": "Prekliči predlog",
+    "change": "Spremeni termine",
+    "reschedule": "Prestavi",
+    "addSlot": "še en termin",
+    "send": "Pošlji",
+    "askedBy": "{name} sprašuje, kdaj bi šla:",
+    "waiting": "Čakam odgovor",
+    "scheduledFor": "Dogovorjeno: {when}",
+    "commentPlaceholder": "Komentar ...",
+    "event": {
+      "proposed": "je predlagal/a",
+      "countered": "je predlagal/a drug termin",
+      "accepted": "je sprejel/a",
+      "scheduled": "je potrdil/a 💕",
+      "refused": "pravi, da termin ne ustreza",
+      "cancelled": "je preklical/a predlog",
+      "comment": ""
     }
   }
 }
