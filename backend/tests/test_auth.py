@@ -3,14 +3,7 @@ from datetime import timedelta
 from app import config
 from app.auth.tokens import invite_new_user
 from tests.fake_authenticator import FakeAuthenticator
-
-
-async def register(client, token, device=None):
-    device = device or FakeAuthenticator(config.ORIGIN, config.RP_ID)
-    opts = await client.post("/api/auth/passkey/register/options", json={"token": token})
-    assert opts.status_code == 200, opts.text
-    res = await client.post("/api/auth/passkey/register/verify", json={"token": token, "credential": device.create(opts.json())})
-    return res, device
+from tests.helpers import login, register
 
 
 async def test_invited_user_registers_passkey_and_is_logged_in(client, conn):
@@ -40,11 +33,6 @@ async def test_expired_invite_is_rejected(client, conn):
     res = await client.post("/api/auth/passkey/register/options", json={"token": token})
 
     assert res.json() == {"code": "auth.invalid_token"}
-
-
-async def login(client, device):
-    opts = await client.post("/api/auth/passkey/login/options")
-    return await client.post("/api/auth/passkey/login/verify", json={"credential": device.get(opts.json())})
 
 
 async def test_registered_passkey_logs_in_from_a_new_browser(client, conn):

@@ -4,6 +4,7 @@ from pydantic import BaseModel
 
 from app.auth.deps import current_user
 from app.auth.pin import check_pin
+from app.auth.roles import user_permissions
 from app.auth.passkeys import authenticate, authentication_options, register_passkey, registration_options
 from app.auth.sessions import COOKIE, create_session, delete_session, set_session_cookie
 from app.auth.tokens import use_token, valid_token
@@ -30,13 +31,14 @@ class PinLoginIn(BaseModel):
     pin: str
 
 
-def me_out(user: asyncpg.Record) -> dict:
-    return {"id": user["id"], "display_name": user["display_name"]}
+async def me_out(conn: asyncpg.Connection, user: asyncpg.Record) -> dict:
+    return {"id": user["id"], "display_name": user["display_name"], "username": user["username"],
+            "permissions": await user_permissions(conn, user["id"])}
 
 
 async def _login(conn: asyncpg.Connection, request: Request, response: Response, user_id: int) -> dict:
     set_session_cookie(response, await create_session(conn, user_id, request.headers.get("user-agent")))
-    return me_out(await conn.fetchrow("SELECT * FROM users WHERE id = $1", user_id))
+    return await me_out(conn, await conn.fetchrow("SELECT * FROM users WHERE id = $1", user_id))
 
 
 @router.post("/passkey/register/options")
@@ -80,5 +82,5 @@ async def logout(request: Request, response: Response, conn: asyncpg.Connection 
 
 
 @router.get("/me")
-async def me(user: asyncpg.Record = Depends(current_user)):
-    return me_out(user)
+async def me(user: asyncpg.Record = Depends(current_user), conn: asyncpg.Connection = Depends(get_conn)):
+    return await me_out(conn, user)

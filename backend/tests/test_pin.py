@@ -2,7 +2,7 @@ import pytest
 
 from app.auth.pin import unlock
 from app.auth.tokens import invite_new_user
-from tests.test_auth import register
+from tests.helpers import register
 
 
 @pytest.fixture
