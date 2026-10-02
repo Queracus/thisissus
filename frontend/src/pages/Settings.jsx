@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { setPin } from '../auth.js'
+import Devices from '../components/Devices.jsx'
 import Screen, { Button, Input } from '../components/Screen.jsx'
 
 export default function Settings() {
@@ -27,6 +28,7 @@ export default function Settings() {
         <Button type="submit">Shrani PIN</Button>
         {msg && <p className="text-sm">{msg}</p>}
       </form>
+      <Devices />
       <Link to="/" className="text-sm text-rose-500 underline">Nazaj</Link>
     </Screen>
   )

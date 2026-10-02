@@ -4,7 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { registerPasskey } from '../auth.js'
 import Screen, { Button } from '../components/Screen.jsx'
 
-export default function Invite() {
+export default function Invite({ recovery = false }) {
   const { token } = useParams()
   const qc = useQueryClient()
   const navigate = useNavigate()

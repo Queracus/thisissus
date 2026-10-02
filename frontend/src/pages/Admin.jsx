@@ -42,6 +42,8 @@ function UserRow({ user, roleNames }) {
     onSuccess: refresh,
     onError: (e) => setError(e.code === 'admin.last_admin' ? 'Vsaj en admin mora ostati.' : e.code),
   })
+  const [recoveryUrl, setRecoveryUrl] = useState(null)
+  const recovery = async () => setRecoveryUrl((await send('POST', `/admin/users/${user.id}/recovery-link`)).url)
   const toggle = (role) =>
     setRoles.mutate(user.roles.includes(role) ? user.roles.filter((r) => r !== role) : [...user.roles, role])
 
@@ -57,12 +59,18 @@ function UserRow({ user, roleNames }) {
             <input type="checkbox" checked={user.roles.includes(role)} onChange={() => toggle(role)} /> {role}
           </label>
         ))}
+        <button onClick={recovery} className="rounded-full bg-rose-100 px-3 py-1 text-xs font-bold">Povezava za obnovo</button>
         {user.locked && (
           <button onClick={() => unlock.mutate()} className="ml-auto rounded-full bg-amber-400 px-3 py-1 text-xs font-bold">
             Odkleni PIN
           </button>
         )}
       </div>
+      {recoveryUrl && (
+        <button onClick={() => navigator.clipboard.writeText(recoveryUrl)} className="mt-2 break-all text-left text-xs text-rose-600 underline">
+          {recoveryUrl} (klikni za kopiranje, velja 24 ur)
+        </button>
+      )}
       {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
     </li>
   )

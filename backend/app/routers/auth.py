@@ -11,6 +11,7 @@ from app.auth.tokens import use_token, valid_token
 from app.db import get_conn
 
 router = APIRouter(prefix="/auth")
+PASSKEY_TOKENS = ("invite", "recovery")  # both let a user register a new passkey
 
 
 class TokenIn(BaseModel):
@@ -43,13 +44,13 @@ async def _login(conn: asyncpg.Connection, request: Request, response: Response,
 
 @router.post("/passkey/register/options")
 async def register_options(body: TokenIn, conn: asyncpg.Connection = Depends(get_conn)):
-    tok = await valid_token(conn, body.token)
+    tok = await valid_token(conn, body.token, PASSKEY_TOKENS)
     return await registration_options(conn, await conn.fetchrow("SELECT * FROM users WHERE id = $1", tok["user_id"]))
 
 
 @router.post("/passkey/register/verify")
 async def register_verify(body: RegisterIn, request: Request, response: Response, conn: asyncpg.Connection = Depends(get_conn)):
-    tok = await valid_token(conn, body.token)
+    tok = await valid_token(conn, body.token, PASSKEY_TOKENS)
     async with conn.transaction():
         await register_passkey(conn, tok["user_id"], body.credential)
         await use_token(conn, body.token)

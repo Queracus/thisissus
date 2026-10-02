@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 import asyncpg
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel, Field
@@ -5,7 +7,7 @@ from pydantic import BaseModel, Field
 from app import config
 from app.auth.pin import unlock
 from app.auth.roles import require_permission
-from app.auth.tokens import invite_new_user
+from app.auth.tokens import invite_new_user, issue_token
 from app.db import get_conn
 from app.errors import ApiError
 
@@ -62,3 +64,10 @@ async def create_invite(body: InviteIn, _=Depends(require_permission("issue_toke
 async def unlock_user(user_id: int, _=Depends(require_permission("manage_users")), conn: asyncpg.Connection = Depends(get_conn)):
     await unlock(conn, user_id)
     return {"ok": True}
+
+
+@router.post("/users/{user_id}/recovery-link")
+async def recovery_link(user_id: int, _=Depends(require_permission("issue_tokens")), conn: asyncpg.Connection = Depends(get_conn)):
+    if not await conn.fetchval("SELECT 1 FROM users WHERE id = $1", user_id):
+        raise ApiError(404, "not_found")
+    return {"url": f"{config.ORIGIN}/recover/{await issue_token(conn, 'recovery', user_id, timedelta(hours=24))}"}

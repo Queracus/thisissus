@@ -22,6 +22,7 @@ createRoot(document.getElementById('root')).render(
           <Route path="/admin" element={<RequireAuth><Admin /></RequireAuth>} />
           <Route path="/login" element={<Login />} />
           <Route path="/invite/:token" element={<Invite />} />
+          <Route path="/recover/:token" element={<Invite recovery />} />
         </Routes>
       </BrowserRouter>
     </QueryClientProvider>
